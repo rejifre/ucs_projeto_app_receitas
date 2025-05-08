@@ -7,4 +7,7 @@ class Routes {
   static const String home = '/home';
   static const String recipe = '/recipe';
   static const String editRecipe = '/edit';
+  static const String categoriesScreen = '/categories';
+  static const String search = '/search';
+  static const String favorites = '/favorites';
 }

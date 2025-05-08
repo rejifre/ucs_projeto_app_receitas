@@ -18,5 +18,10 @@ abstract class AppTheme {
         }),
       ),
     ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: AppColors.backgroundColor,
+      selectedItemColor: AppColors.buttonMainColor,
+      unselectedItemColor: AppColors.buttonDisabled,
+    ),
   );
 }
