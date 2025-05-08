@@ -56,7 +56,7 @@ class RecipeDetailScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                recipe!.title,
+                recipe.title,
                 style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
               ),
               Padding(
@@ -127,7 +127,7 @@ class RecipeDetailScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              Text(recipe!.description, style: TextStyle(fontSize: 16.0)),
+              Text(recipe.description, style: TextStyle(fontSize: 16.0)),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: Text(
@@ -135,7 +135,7 @@ class RecipeDetailScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              IngredientsDetailWidget(ingredients: recipe!.ingredients),
+              IngredientsDetailWidget(ingredients: recipe.ingredients),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: Text(
