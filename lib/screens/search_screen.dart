@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/bottom_navigator_bar_widget.dart';
-
 //TODO: Implementar a lógica de pesquisa
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
