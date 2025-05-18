@@ -37,6 +37,31 @@ class EditFormIngredientListWidgetState
     }
   }
 
+  void setIngredients(List<Ingredient> ingredients) {
+    setState(() {
+      // Dispose dos controllers antigos antes de limpar as listas
+      for (final controller in ingredientNameControllers) {
+        controller.dispose();
+      }
+      for (final controller in ingredientQuantityControllers) {
+        controller.dispose();
+      }
+      ingredientIds.clear();
+      ingredientNameControllers.clear();
+      ingredientQuantityControllers.clear();
+
+      for (final ingredient in ingredients) {
+        ingredientIds.add(ingredient.id);
+        ingredientNameControllers.add(
+          TextEditingController(text: ingredient.name),
+        );
+        ingredientQuantityControllers.add(
+          TextEditingController(text: ingredient.quantity),
+        );
+      }
+    });
+  }
+
   void addIngredientField() {
     setState(() {
       ingredientIds.add(_uuid.v4());

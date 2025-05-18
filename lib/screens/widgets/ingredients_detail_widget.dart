@@ -15,14 +15,35 @@ class IngredientsDetailWidget extends StatelessWidget {
 
     return Column(
       children: List.generate(ingredients.length, (index) {
-        return Row(
-          spacing: 10.0,
+        return Column(
           children: [
-            Text(
-              ingredients[index].quantity,
-              style: TextStyle(fontSize: fontSize),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8.0,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    ingredients[index].quantity,
+                    style: TextStyle(fontSize: fontSize),
+                  ),
+                  Expanded(
+                    child: Text(
+                      ingredients[index].name,
+                      style: TextStyle(fontSize: fontSize),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(ingredients[index].name, style: TextStyle(fontSize: fontSize)),
+            const Divider(
+              color: Color.fromRGBO(0, 0, 0, 0.1),
+              height: 1,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+            ),
           ],
         );
       }),

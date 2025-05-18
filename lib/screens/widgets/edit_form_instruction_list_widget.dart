@@ -33,6 +33,24 @@ class EditFormInstructionListWidgetState
     }
   }
 
+  void setInstructions(List<Instruction> steps) {
+    setState(() {
+      // Dispose dos controllers antigos antes de limpar as listas
+      for (final controller in instructionDescriptionControllers) {
+        controller.dispose();
+      }
+      instructionIds.clear();
+      instructionDescriptionControllers.clear();
+
+      for (final instruction in steps) {
+        instructionIds.add(instruction.id);
+        instructionDescriptionControllers.add(
+          TextEditingController(text: instruction.description),
+        );
+      }
+    });
+  }
+
   void addInstructionField() {
     setState(() {
       instructionIds.add(_uuid.v4()); // Generate a unique ID

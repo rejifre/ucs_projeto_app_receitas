@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/ingredient_model.dart';
@@ -8,6 +9,7 @@ import '../models/instruction_model.dart';
 import '../models/recipe_model.dart';
 import '../providers/recipes_provider.dart';
 import '../routes/routes.dart';
+import '../services/recipe_generator_service.dart';
 import '../ui/app_colors.dart';
 import '../ui/recipe_screen_type.dart';
 import 'widgets/edit_form_ingredient_list_widget.dart';
@@ -50,7 +52,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       _scoreController.text = _currentRecipe?.score.toString() ?? '';
       _preparationTimeController.text =
           _currentRecipe?.preparationTime ?? '0h 0m';
-      _currentDate = _currentRecipe?.date ?? _getData();
+      _currentDate = _currentRecipe?.date ?? _getDate();
 
       _isInitialized = true;
     }
@@ -66,7 +68,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
     super.dispose();
   }
 
-  String _getData() {
+  String _getDate() {
     final now = DateTime.now();
     return DateFormat('dd/MM/yyyy kk:mm').format(now.toUtc());
   }
@@ -104,6 +106,36 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
     );
   }
 
+  Future<void> _generateRecipe() async {
+    final sm = ScaffoldMessenger.of(context);
+    Recipe? generateRecipe = await RecipeGeneratorService().getRecipe();
+
+    if (generateRecipe == null) {
+      Logger().e('Erro ao gerar receita');
+      sm.showSnackBar(
+        const SnackBar(
+          content: Text("Erro ao gerar receita."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      _idController.text = generateRecipe.id;
+      _titleController.text = generateRecipe.title;
+      _descriptionController.text = generateRecipe.description;
+      _scoreController.text = generateRecipe.score.toString();
+      _preparationTimeController.text = generateRecipe.preparationTime;
+      _ingredientListKey.currentState?.setIngredients(
+        generateRecipe.ingredients,
+      );
+      _instructionListKey.currentState?.setInstructions(generateRecipe.steps);
+
+      setState(() {
+        _currentRecipe = generateRecipe;
+        _currentDate = generateRecipe.date;
+      });
+    }
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<RecipesProvider>(context, listen: false);
@@ -137,11 +169,11 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         id: _idController.text,
         title: _titleController.text,
         description: _descriptionController.text,
-        score: double.parse(_scoreController.text),
+        score: double.tryParse(_scoreController.text) ?? 0,
         preparationTime: _preparationTimeController.text,
         ingredients: ingredients,
         steps: instructions,
-        date: _getData(),
+        date: _getDate(),
       );
       final sm = ScaffoldMessenger.of(context);
 
@@ -161,8 +193,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing =
-        _currentRecipe != null && _currentRecipe!.title.isNotEmpty;
+    final isEditing = (_currentRecipe?.title ?? '').isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -174,7 +205,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
             visible: isEditing,
             child: TextButton.icon(
               icon: const Icon(Icons.delete),
-              label: Text("Excluir"),
+              label: const Text("Excluir"),
               style: TextButton.styleFrom(foregroundColor: AppColors.delete),
               onPressed: _confirmDeleteRecipe,
             ),
@@ -182,22 +213,31 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              Text(
-                textAlign: TextAlign.end,
-                'Data: $_currentDate',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    onPressed: _generateRecipe,
+                    label: const Text("Gerar Receita"),
+                    icon: const Icon(Icons.draw_outlined),
+                  ),
+                  Text(
+                    'Data: $_currentDate',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               TextFormField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'Nome'),
+                decoration: const InputDecoration(labelText: 'Nome'),
                 validator:
                     (val) =>
                         val == null || val.isEmpty
@@ -206,21 +246,28 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Descrição'),
+                decoration: const InputDecoration(labelText: 'Descrição'),
               ),
               TextFormField(
                 controller: _scoreController,
-                decoration: InputDecoration(labelText: 'Nota de 0 a 5'),
+                decoration: const InputDecoration(labelText: 'Nota de 0 a 5'),
                 keyboardType: TextInputType.number,
-                validator:
-                    (val) =>
-                        val == null || val.isEmpty
-                            ? 'Por favor preencha a nota.'
-                            : null,
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return 'Por favor preencha a nota.';
+                  }
+                  final score = double.tryParse(val);
+                  if (score == null || score < 0 || score > 5) {
+                    return 'A nota deve ser entre 0 e 5.';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: _preparationTimeController,
-                decoration: InputDecoration(labelText: 'Tempo de Preparo'),
+                decoration: const InputDecoration(
+                  labelText: 'Tempo de Preparo',
+                ),
                 validator:
                     (val) =>
                         val == null || val.isEmpty
@@ -234,7 +281,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                   initialIngredients: _currentRecipe?.ingredients ?? [],
                 ),
               ),
-              Divider(),
+              const Divider(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: EditFormInstructionListWidget(

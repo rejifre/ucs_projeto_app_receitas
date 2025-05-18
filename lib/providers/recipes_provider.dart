@@ -23,7 +23,7 @@ class RecipesProvider with ChangeNotifier {
     await loadRecipes(); // Atualiza a lista
   }
 
-  void addOrUpdateRecipe(Recipe recipe) async {
+  Future<void> addOrUpdateRecipe(Recipe recipe) async {
     if (_recipes.any((r) => r.id == recipe.id)) {
       // Se a receita já existe, atualiza-a
       await _service.updateRecipe(recipe);
