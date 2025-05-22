@@ -10,7 +10,7 @@ import '../models/instruction_model.dart';
 
 class RecipeGeneratorService {
   /// Method to generate a random recipe
-  Random _random = Random();
+  final Random _random = Random();
 
   RecipeGeneratorService();
 
@@ -18,23 +18,20 @@ class RecipeGeneratorService {
   /// Returns a String with the recipe
   Future<String> getLoremIpsum() async {
     const paragraphType = 'normal';
-    const paragraphCount = 2;
+    const paragraphCount = 4;
 
     final url = Uri.parse(
       'https://randommer.io/api/Text/LoremIpsum?loremType=$paragraphType&type=paragraphs&number=$paragraphCount',
     );
-    final headers = {
-      'X-Api-Key': 'dbebdf0e06a64a2590004804dfc2b135', // Exemplo de header
-      'Content-Type': 'application/json',
-    };
+    final headers = {'X-Api-Key': '', 'Content-Type': 'application/json'};
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as String;
+      final String data = jsonDecode(response.body);
       Logger().i('Resposta: $data');
       return data;
     } else {
-      throw Exception('Erro ao buscar Lorem Ipsum');
+      throw Exception('Erro ao buscar Lorem Ipsum: ${response.statusCode}');
     }
   }
 
@@ -46,37 +43,48 @@ class RecipeGeneratorService {
 
     if (result.isEmpty) return null;
 
-    final values = result.split('.');
+    final splitValues = result.split('<br>');
 
-    Recipe recipe = _getRecipeModel(values);
-
-    _getIngredientes(values, recipe);
-
-    _getInstructions(values, recipe);
+    while (splitValues.length < 3) {
+      splitValues.add(result.split('.')[0]);
+    }
+    Recipe recipe = _getRecipeModel(splitValues[0].split('.'));
+    _getIngredients(splitValues[1].split('.'), recipe);
+    _getInstructions(splitValues[2].split('.'), recipe);
 
     return recipe;
   }
 
-  /// Method to generate a random recipe
-  /// Returns an object of type Recipe
+  /// Generates a Recipe model from a list of string values.
+  /// Ensures safe access and fallback for missing or malformed data.
   Recipe _getRecipeModel(List<String> values) {
-    final recipe = Recipe(
+    final title =
+        (values.isNotEmpty && values[0].split(',').isNotEmpty)
+            ? values[0].split(',')[0].trim()
+            : 'Receita Aleatória';
+    final description =
+        (values.length > 1 && values[1].trim().isNotEmpty)
+            ? values[1].trim()
+            : 'Descrição não disponível.';
+
+    return Recipe(
       id: Uuid().v4(),
-      title: values[0].split(',')[0],
-      description: values[1],
+      title: title,
+      description: description,
       score: double.parse((_random.nextDouble() * 5).toStringAsFixed(1)),
-      date: DateFormat('dd/MM/yyyy kk:mm').format(DateTime.now().toUtc()),
+      date: DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now().toUtc()),
       preparationTime: _getRandomPreparationTime(),
     );
-    return recipe;
   }
 
   /// Method to generate a list of ingredients
   /// Returns a list of objects of type Ingredient
-  void _getIngredientes(List<String> values, Recipe recipe) {
+  void _getIngredients(List<String> values, Recipe recipe) {
     final ingredients = <Ingredient>[];
-    for (var i = 0; i < _getRandomNumber(); i++) {
-      final ingredient = values[i].split(',')[0];
+    final end = min(_getNumberOfItems(), values.length);
+
+    for (var i = 0; i < end; i++) {
+      final ingredient = values[i].split(',')[0].trim();
       ingredients.add(
         Ingredient(
           id: Uuid().v4(),
@@ -93,23 +101,27 @@ class RecipeGeneratorService {
   /// Returns a list of objects of type Instruction
   void _getInstructions(List<String> values, Recipe recipe) {
     final steps = <Instruction>[];
-    for (var i = 0; i < _getRandomNumber(); i++) {
-      final instruction = values[i].split(',')[0];
-      steps.add(
-        Instruction(
-          id: Uuid().v4(),
-          description: instruction,
-          stepOrder: i + 1,
-          recipeId: recipe.id,
-        ),
-      );
+    final end = min(_getNumberOfItems(), values.length);
+
+    for (var i = 0; i < end; i++) {
+      final instruction = values[i].trim();
+      if (instruction.isNotEmpty) {
+        steps.add(
+          Instruction(
+            id: Uuid().v4(),
+            description: instruction,
+            stepOrder: i + 1,
+            recipeId: recipe.id,
+          ),
+        );
+      }
     }
     recipe.steps = steps;
   }
 
   /// Method to generate a random quantity
   /// Returns a String with the quantity
-  _getRandomQuantity() {
+  String _getRandomQuantity() {
     final quantity = _random.nextInt(1000) + 1;
 
     switch (_random.nextInt(2)) {
@@ -124,18 +136,28 @@ class RecipeGeneratorService {
 
   /// Method to generate a random preparation time
   /// Returns a String with the preparation time
-  _getRandomPreparationTime() {
+  String _getRandomPreparationTime() {
     final hours = _random.nextInt(3);
     final minutes = _random.nextInt(60);
 
     return '$hours h $minutes m';
   }
 
-  _getRandomNumber() {
-    final value = _random.nextInt(9) + 1;
-    if (value < 3) {
-      return 4;
-    }
-    return value;
+  /// Method to get a random number of items.
+  /// Returns an int with the number of items
+  int _getNumberOfItems({int min = 3, int max = 9}) {
+    return min + _random.nextInt(max - min + 1);
+  }
+
+  /// Method to split a list into three parts
+  List<List<String>> splitListInThreeParts(List<String> list) {
+    int totalLength = list.length;
+    int partSize = (totalLength / 3).ceil();
+
+    List<String> part1 = list.sublist(0, partSize);
+    List<String> part2 = list.sublist(partSize, min(partSize * 2, totalLength));
+    List<String> part3 = list.sublist(min(partSize * 2, totalLength));
+
+    return [part1, part2, part3];
   }
 }

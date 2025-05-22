@@ -70,7 +70,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
 
   String _getDate() {
     final now = DateTime.now();
-    return DateFormat('dd/MM/yyyy kk:mm').format(now.toUtc());
+    return DateFormat('dd/MM/yyyy HH:mm').format(now.toUtc());
   }
 
   void _confirmDeleteRecipe() {
