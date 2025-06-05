@@ -41,7 +41,7 @@ class RecipeRepository {
   Future<List<Recipe>> searchByName(String name) async {
     final recipesDB = await _db.searchByName(
       RecipeRepository.table,
-      'name',
+      'title',
       name,
     );
     return recipesDB.map((item) => Recipe.fromMap(item)).toList();

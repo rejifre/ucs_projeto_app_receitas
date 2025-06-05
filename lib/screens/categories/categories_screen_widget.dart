@@ -23,14 +23,14 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
     _searchController.addListener(_onSearchChanged);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initialized) {
-      _loadCategories();
-      _initialized = true;
-    }
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (!_initialized) {
+  //     _loadCategories();
+  //     _initialized = true;
+  //   }
+  // }
 
   @override
   void dispose() {

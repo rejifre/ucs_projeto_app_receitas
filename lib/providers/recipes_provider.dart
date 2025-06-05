@@ -33,4 +33,13 @@ class RecipesProvider with ChangeNotifier {
     }
     await loadRecipes();
   }
+
+  Future<void> searchRecipes([String? query]) async {
+    if (query != null && query.isNotEmpty) {
+      _recipes = await _service.searchRecipes(query);
+    } else {
+      _recipes = [];
+    }
+    notifyListeners();
+  }
 }

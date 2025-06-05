@@ -80,4 +80,15 @@ class RecipesService {
 
     return null;
   }
+
+  Future<List<Recipe>> searchRecipes(String query) async {
+    final recipes = await _recipeRepo.searchByName(query);
+    for (var recipe in recipes) {
+      await _getRecipeInfo(recipe);
+    }
+
+    logger.i('Search Recipes');
+    logger.i(recipes);
+    return recipes;
+  }
 }
