@@ -2,7 +2,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'sqls/ingredient_sql.dart';
 import 'sqls/instruction_sql.dart';
+import 'sqls/recipe_category_sql.dart';
 import 'sqls/recipe_sql.dart';
+import 'sqls/recipe_tag_sql.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -35,6 +37,8 @@ class DatabaseHelper {
     await db.execute(RecipeSql.createRecipeTable());
     await db.execute(IngredientSql.createIngredientTable());
     await db.execute(InstructionSql.createInstructionTable());
+    await db.execute(RecipeCategorySql.createRecipeCategoryTable());
+    await db.execute(RecipeTagSql.createRecipeTagTable());
   }
 
   Future<int> insert(String table, Map<String, Object?> data) async {
@@ -83,5 +87,13 @@ class DatabaseHelper {
       return result.first;
     }
     return null;
+  }
+
+  Future<List<Map<String, Object?>>> rawQuery(
+    String sql, [
+    List<Object>? arguments,
+  ]) async {
+    final db = await database;
+    return await db.rawQuery(sql, arguments);
   }
 }

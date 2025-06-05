@@ -2,27 +2,21 @@
 import 'dart:convert';
 
 class Tag {
+  String id;
   String name;
-  String description;
 
-  Tag({required this.name, required this.description});
+  Tag({required this.id, required this.name});
 
-  Tag copyWith({String? name, String? description}) {
-    return Tag(
-      name: name ?? this.name,
-      description: description ?? this.description,
-    );
+  Tag copyWith({String? id, String? name}) {
+    return Tag(id: id ?? this.id, name: name ?? this.name);
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'name': name, 'description': description};
+    return <String, dynamic>{'id': id, 'name': name};
   }
 
   factory Tag.fromMap(Map<String, dynamic> map) {
-    return Tag(
-      name: map['name'] as String,
-      description: map['description'] as String,
-    );
+    return Tag(id: map['id'] as String, name: map['name'] as String);
   }
 
   String toJson() => json.encode(toMap());
@@ -31,15 +25,15 @@ class Tag {
       Tag.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Tag(name: $name, description: $description)';
+  String toString() => 'Tag(id: $id, name: $name)';
 
   @override
   bool operator ==(covariant Tag other) {
     if (identical(this, other)) return true;
 
-    return other.name == name && other.description == description;
+    return other.id == id && other.name == name;
   }
 
   @override
-  int get hashCode => name.hashCode ^ description.hashCode;
+  int get hashCode => id.hashCode ^ name.hashCode;
 }

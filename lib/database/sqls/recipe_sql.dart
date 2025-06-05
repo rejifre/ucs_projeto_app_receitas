@@ -1,7 +1,7 @@
 class RecipeSql {
   static String createRecipeTable() {
     return '''
-      CREATE TABLE recipe(
+      CREATE TABLE recipes (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT,

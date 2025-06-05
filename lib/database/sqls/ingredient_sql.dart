@@ -1,7 +1,7 @@
 class IngredientSql {
   static String createIngredientTable() {
     return '''
-      CREATE TABLE ingredient (
+      CREATE TABLE ingredients (
         id TEXT PRIMARY KEY,
         recipe_id TEXT,
         name TEXT NOT NULL,

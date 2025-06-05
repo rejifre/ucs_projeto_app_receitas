@@ -5,7 +5,7 @@ import '/database/database_helper.dart';
 class IngredientRepository {
   static final DatabaseHelper _db = DatabaseHelper();
 
-  static const String table = 'ingredient';
+  static const String table = 'ingredients';
 
   Future<int> insert(Ingredient ingredient) async {
     return await _db.insert(table, ingredient.toMap());

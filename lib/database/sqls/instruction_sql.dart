@@ -1,7 +1,7 @@
 class InstructionSql {
   static String createInstructionTable() {
     return '''
-      CREATE TABLE instruction(
+      CREATE TABLE instructions (
         id TEXT PRIMARY KEY, 
         recipe_id TEXT, 
         description TEXT, 

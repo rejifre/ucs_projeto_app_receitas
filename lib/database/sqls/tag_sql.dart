@@ -1,7 +1,7 @@
 class IngredientSql {
   static String createtagTable() {
     return '''
-      CREATE TABLE tag (
+      CREATE TABLE tags (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
       )
