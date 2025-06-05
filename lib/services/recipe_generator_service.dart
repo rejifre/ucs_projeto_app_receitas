@@ -148,16 +148,4 @@ class RecipeGeneratorService {
   int _getNumberOfItems({int min = 3, int max = 9}) {
     return min + _random.nextInt(max - min + 1);
   }
-
-  /// Method to split a list into three parts
-  List<List<String>> splitListInThreeParts(List<String> list) {
-    int totalLength = list.length;
-    int partSize = (totalLength / 3).ceil();
-
-    List<String> part1 = list.sublist(0, partSize);
-    List<String> part2 = list.sublist(partSize, min(partSize * 2, totalLength));
-    List<String> part3 = list.sublist(min(partSize * 2, totalLength));
-
-    return [part1, part2, part3];
-  }
 }
