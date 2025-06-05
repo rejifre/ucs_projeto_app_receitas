@@ -62,14 +62,14 @@ class _SearchScreenState extends State<SearchScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Text(
-              'Categorias',
+              'Buscar',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SearchBar(
-              hintText: 'Buscar categoria....',
+              hintText: 'Buscar receitas....',
               onChanged: (value) => _loadRecipes(query: value.trim()),
             ),
           ),
