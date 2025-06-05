@@ -106,4 +106,13 @@ class CategoryRepository {
     ''', categoryIds);
     return recipes.map((recipe) => Recipe.fromMap(recipe)).toList();
   }
+
+  Future<List<Category>> searchByName(String name) async {
+    final categoriesDB = await _db.searchByName(
+      CategoryRepository.table,
+      'name',
+      name,
+    );
+    return categoriesDB.map((item) => Category.fromMap(item)).toList();
+  }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'providers/categories_provider.dart';
 import 'routes/routes.dart';
-import 'screens/categories_screen.dart';
-import 'screens/edit_recipe_screen.dart';
+import 'screens/categories/categories_screen_widget.dart';
+import 'screens/categories/edit_category_screen.dart';
+import 'screens/recipes/edit_recipe_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/recipe_detail_screen.dart';
+import 'screens/recipes/recipe_detail_screen.dart';
 import 'providers/recipes_provider.dart';
 import 'screens/search_screen.dart';
 import 'screens/splash_screen.dart';
@@ -15,6 +17,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => RecipesProvider()),
+        ChangeNotifierProvider(create: (context) => CategoriesProvider()),
       ],
       child: const MyApp(),
     ),
@@ -39,7 +42,8 @@ class MyApp extends StatelessWidget {
           Routes.home: (context) => const HomeScreen(),
           Routes.recipe: (context) => const RecipeDetailScreen(),
           Routes.editRecipe: (context) => EditRecipeScreen(),
-          Routes.categoriesScreen: (context) => const CategoriesScreen(),
+          Routes.categoriesScreen: (context) => const CategoriesScreenWidget(),
+          Routes.editCategory: (context) => const EditCategoryScreen(),
           Routes.search: (context) => const SearchScreen(),
         },
       ),

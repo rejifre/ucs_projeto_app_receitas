@@ -1,10 +1,10 @@
-class IngredientSql {
-  static String createtagTable() {
+class TagSql {
+  static String createTagTable() {
     return '''
       CREATE TABLE tags (
         id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-      )
+        name TEXT NOT NULL
+      );
     ''';
   }
 }

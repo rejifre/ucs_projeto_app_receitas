@@ -106,4 +106,9 @@ class TagRepository {
     ''', tagIds);
     return recipes.map((recipe) => Recipe.fromMap(recipe)).toList();
   }
+
+  Future<List<Recipe>> searchByName(String name) async {
+    final recipesDB = await _db.searchByName(TagRepository.table, 'name', name);
+    return recipesDB.map((item) => Recipe.fromMap(item)).toList();
+  }
 }

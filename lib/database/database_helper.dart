@@ -1,10 +1,12 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'sqls/category_sql.dart';
 import 'sqls/ingredient_sql.dart';
 import 'sqls/instruction_sql.dart';
 import 'sqls/recipe_category_sql.dart';
 import 'sqls/recipe_sql.dart';
 import 'sqls/recipe_tag_sql.dart';
+import 'sqls/tag_sql.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -37,6 +39,8 @@ class DatabaseHelper {
     await db.execute(RecipeSql.createRecipeTable());
     await db.execute(IngredientSql.createIngredientTable());
     await db.execute(InstructionSql.createInstructionTable());
+    await db.execute(CategorySql.createCategoryTable());
+    await db.execute(TagSql.createTagTable());
     await db.execute(RecipeCategorySql.createRecipeCategoryTable());
     await db.execute(RecipeTagSql.createRecipeTagTable());
   }
@@ -95,5 +99,18 @@ class DatabaseHelper {
   ]) async {
     final db = await database;
     return await db.rawQuery(sql, arguments);
+  }
+
+  Future<List<Map<String, Object?>>> searchByName(
+    String table,
+    String nameColumn,
+    String name,
+  ) async {
+    final db = await database;
+    return await db.query(
+      table,
+      where: '$nameColumn LIKE ?',
+      whereArgs: ['%$name%'],
+    );
   }
 }

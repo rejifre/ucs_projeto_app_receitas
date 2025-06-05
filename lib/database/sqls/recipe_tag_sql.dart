@@ -7,7 +7,7 @@ class RecipeTagSql {
         PRIMARY KEY (recipe_id, tag_id),
         FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
         FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-      );
+      )
     ''';
   }
 }

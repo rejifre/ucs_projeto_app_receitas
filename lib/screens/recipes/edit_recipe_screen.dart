@@ -4,16 +4,16 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../models/ingredient_model.dart';
-import '../models/instruction_model.dart';
-import '../models/recipe_model.dart';
-import '../providers/recipes_provider.dart';
-import '../routes/routes.dart';
-import '../services/recipe_generator_service.dart';
-import '../ui/app_colors.dart';
-import '../ui/recipe_screen_type.dart';
-import 'widgets/edit_form_ingredient_list_widget.dart';
-import 'widgets/edit_form_instruction_list_widget.dart';
+import '../../models/ingredient_model.dart';
+import '../../models/instruction_model.dart';
+import '../../models/recipe_model.dart';
+import '../../providers/recipes_provider.dart';
+import '../../routes/routes.dart';
+import '../../services/recipe_generator_service.dart';
+import '../../ui/app_colors.dart';
+import '../../ui/recipe_screen_type.dart';
+import 'edit_form_ingredient_list_widget.dart';
+import 'edit_form_instruction_list_widget.dart';
 
 class EditRecipeScreen extends StatefulWidget {
   const EditRecipeScreen({super.key});

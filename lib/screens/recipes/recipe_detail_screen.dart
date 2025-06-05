@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/recipe_model.dart';
-import '../providers/recipes_provider.dart';
-import '../routes/routes.dart';
-import '../ui/app_colors.dart';
-import 'widgets/ingredients_detail_widget.dart';
-import 'widgets/prepare_instruction_widget.dart';
-import 'widgets/star_rating_widget.dart';
+import '../../models/recipe_model.dart';
+import '../../providers/recipes_provider.dart';
+import '../../routes/routes.dart';
+import '../../ui/app_colors.dart';
+import 'ingredients_detail_widget.dart';
+import 'prepare_instruction_widget.dart';
+import '../widgets/star_rating_widget.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   const RecipeDetailScreen({super.key});
