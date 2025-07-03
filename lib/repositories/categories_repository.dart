@@ -1,9 +1,9 @@
 import 'package:logger/logger.dart';
 import '../models/category_model.dart';
-import '../repositories/category_repository.dart';
+import '../services/category_service.dart';
 
-class CategoriesService {
-  final CategoryRepository _categoryRepo = CategoryRepository();
+class CategoriesRepository {
+  final CategoryService _categoryRepo = CategoryService();
   final logger = Logger();
 
   Future<void> saveCategory(Category category) async {

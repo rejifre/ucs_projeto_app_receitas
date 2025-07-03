@@ -14,7 +14,6 @@ class CategoriesScreenWidget extends StatefulWidget {
 
 class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
   final TextEditingController _searchController = TextEditingController();
-  bool _initialized = false;
 
   @override
   void initState() {
@@ -22,15 +21,6 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
     // Adiciona um listener para recarregar as categorias sempre que o texto de busca mudar
     _searchController.addListener(_onSearchChanged);
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (!_initialized) {
-  //     _loadCategories();
-  //     _initialized = true;
-  //   }
-  // }
 
   @override
   void dispose() {

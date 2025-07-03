@@ -23,7 +23,10 @@ class RecipeGeneratorService {
     final url = Uri.parse(
       'https://randommer.io/api/Text/LoremIpsum?loremType=$paragraphType&type=paragraphs&number=$paragraphCount',
     );
-    final headers = {'X-Api-Key': '', 'Content-Type': 'application/json'};
+    final headers = {
+      'X-Api-Key': '997d1de03aaf4418a3a2dce238699be3',
+      'Content-Type': 'application/json',
+    };
     final response = await http.get(url, headers: headers);
 
     if (response.statusCode == 200) {

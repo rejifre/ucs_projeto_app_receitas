@@ -1,7 +1,7 @@
 import '../models/recipe_model.dart';
 import '/database/database_helper.dart';
 
-class RecipeRepository {
+class RecipeService {
   static final DatabaseHelper _db = DatabaseHelper();
 
   static const String table = 'recipes';
@@ -40,7 +40,7 @@ class RecipeRepository {
 
   Future<List<Recipe>> searchByName(String name) async {
     final recipesDB = await _db.searchByName(
-      RecipeRepository.table,
+      RecipeService.table,
       'title',
       name,
     );

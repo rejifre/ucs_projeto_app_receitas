@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
 import '../models/recipe_model.dart';
-import '../services/recipes_service.dart';
+import '../repositories/recipes_repository.dart';
 
 class RecipesProvider with ChangeNotifier {
-  final RecipesService _service = RecipesService();
+  final RecipesRepository _service = RecipesRepository();
   List<Recipe> _recipes = [];
 
   List<Recipe> get recipes => _recipes;

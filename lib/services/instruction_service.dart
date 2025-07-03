@@ -1,7 +1,7 @@
 import '../models/instruction_model.dart';
 import '/database/database_helper.dart';
 
-class InstructionRepository {
+class InstructionService {
   static final DatabaseHelper _db = DatabaseHelper();
 
   static const String table = 'instructions';

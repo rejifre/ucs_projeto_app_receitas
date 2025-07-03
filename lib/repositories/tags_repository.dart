@@ -1,9 +1,9 @@
 import 'package:logger/logger.dart';
 import '../models/tag_model.dart';
-import '../repositories/tag_repository.dart';
+import '../services/tag_service.dart';
 
-class TagsService {
-  final TagRepository _tagRepo = TagRepository();
+class TagsRepository {
+  final TagService _tagService = TagService();
   final logger = Logger();
 
   Future<void> saveTag(Tag tag) async {
@@ -17,29 +17,29 @@ class TagsService {
   }
 
   Future<void> addTag(Tag tag) async {
-    await _tagRepo.insert(tag);
+    await _tagService.insert(tag);
     logger.i('added tag');
   }
 
   Future<void> updateTag(Tag tag) async {
-    await _tagRepo.update(tag);
+    await _tagService.update(tag);
     logger.i('update tag');
   }
 
   Future<void> deleteTag(String tagId) async {
-    await _tagRepo.delete(tagId);
+    await _tagService.delete(tagId);
     logger.i('Delete Tag');
   }
 
   Future<List<Tag>> getAllTags() async {
-    final tags = await _tagRepo.getAll();
+    final tags = await _tagService.getAll();
     logger.i('Get All Tags');
     logger.i(tags);
     return tags;
   }
 
   Future<Tag?> getTagById(String id) async {
-    final data = await _tagRepo.getById(id);
+    final data = await _tagService.getById(id);
     if (data != null) {
       return data;
     }

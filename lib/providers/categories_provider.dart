@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/category_model.dart';
-import '../services/categories_service.dart';
+import '../repositories/categories_repository.dart';
 
 class CategoriesProvider with ChangeNotifier {
-  final CategoriesService _service = CategoriesService();
+  final CategoriesRepository _service = CategoriesRepository();
   List<Category> _categories = [];
 
   List<Category> get categories => _categories;

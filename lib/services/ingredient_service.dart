@@ -1,8 +1,7 @@
 import '../models/ingredient_model.dart';
-
 import '/database/database_helper.dart';
 
-class IngredientRepository {
+class IngredientService {
   static final DatabaseHelper _db = DatabaseHelper();
 
   static const String table = 'ingredients';

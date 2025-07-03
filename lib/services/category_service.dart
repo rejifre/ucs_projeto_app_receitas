@@ -2,7 +2,7 @@ import '../database/database_helper.dart';
 import '../models/category_model.dart';
 import '../models/recipe_model.dart';
 
-class CategoryRepository {
+class CategoryService {
   static final DatabaseHelper _db = DatabaseHelper();
 
   static const String table = 'categories';
@@ -11,22 +11,19 @@ class CategoryRepository {
   static const String categoryId = 'category_id';
 
   Future<int> insert(Category category) async {
-    return await _db.insert(CategoryRepository.table, category.toMap());
+    return await _db.insert(CategoryService.table, category.toMap());
   }
 
   Future<int> update(Category category) async {
-    return await _db.update(
-      CategoryRepository.table,
-      category.toMap(),
-      'id = ?',
-      [category.id],
-    );
+    return await _db.update(CategoryService.table, category.toMap(), 'id = ?', [
+      category.id,
+    ]);
   }
 
   Future<int> delete(String id) async {
     // Verifica se a tag está associada a alguma receita
     final associations = await _db.rawQuery(
-      'SELECT 1 FROM ${CategoryRepository.tableRecipeCategories} WHERE ${CategoryRepository.categoryId} = ? LIMIT 1',
+      'SELECT 1 FROM ${CategoryService.tableRecipeCategories} WHERE ${CategoryService.categoryId} = ? LIMIT 1',
       [id],
     );
     if (associations.isNotEmpty) {
@@ -34,11 +31,11 @@ class CategoryRepository {
         'Não é possível deletar: tag ainda associada a uma receita.',
       );
     }
-    return await _db.delete(CategoryRepository.table, 'id = ?', [id]);
+    return await _db.delete(CategoryService.table, 'id = ?', [id]);
   }
 
   Future<Category?> getById(String id) async {
-    final category = await _db.getById(CategoryRepository.table, id);
+    final category = await _db.getById(CategoryService.table, id);
     if (category != null && category.isNotEmpty) {
       return Category.fromMap(category);
     }
@@ -47,15 +44,15 @@ class CategoryRepository {
 
   Future<List<Category>> getAll() async {
     List<Map<String, dynamic>> categoriesDB = await _db.getAll(
-      CategoryRepository.table,
+      CategoryService.table,
     );
     return categoriesDB.map((category) => Category.fromMap(category)).toList();
   }
 
   Future<int> associateCategoryWithRecipe(int recipeId, int categoryId) async {
-    final result = await _db.insert(CategoryRepository.tableRecipeCategories, {
-      CategoryRepository.recipeId: recipeId,
-      CategoryRepository.categoryId: categoryId,
+    final result = await _db.insert(CategoryService.tableRecipeCategories, {
+      CategoryService.recipeId: recipeId,
+      CategoryService.categoryId: categoryId,
     });
     if (result == 0) {
       throw Exception('Failed to associate category with recipe');
@@ -65,7 +62,7 @@ class CategoryRepository {
 
   Future<int> dissociateCategoryFromRecipe(int recipeId, int categoryId) async {
     final result = await _db.delete(
-      CategoryRepository.tableRecipeCategories,
+      CategoryService.tableRecipeCategories,
       'recipe_id = ? AND category_id = ?',
       [recipeId, categoryId],
     );
@@ -77,8 +74,8 @@ class CategoryRepository {
 
   Future<List<Category>> getCategoriesByRecipeId(int recipeId) async {
     final categories = await _db.rawQuery(
-      'SELECT c.* FROM ${CategoryRepository.table} c '
-      'JOIN ${CategoryRepository.tableRecipeCategories} rc '
+      'SELECT c.* FROM ${CategoryService.table} c '
+      'JOIN ${CategoryService.tableRecipeCategories} rc '
       'ON c.id = rc.category_id WHERE rc.recipe_id = ?',
       [recipeId],
     );
@@ -89,7 +86,7 @@ class CategoryRepository {
     final recipes = await _db.rawQuery(
       '''
       SELECT r.* FROM recipes r
-      JOIN ${CategoryRepository.tableRecipeCategories} rc ON r.id = rc.recipe_id
+      JOIN ${CategoryService.tableRecipeCategories} rc ON r.id = rc.recipe_id
       WHERE rc.category_id = ?
       ''',
       [categoryId],
@@ -101,7 +98,7 @@ class CategoryRepository {
     final placeholders = List.filled(categoryIds.length, '?').join(',');
     final recipes = await _db.rawQuery('''
     SELECT DISTINCT r.* FROM recipes r
-    JOIN ${CategoryRepository.tableRecipeCategories} rc ON r.id = rc.recipe_id
+    JOIN ${CategoryService.tableRecipeCategories} rc ON r.id = rc.recipe_id
     WHERE rc.category_id IN ($placeholders)
     ''', categoryIds);
     return recipes.map((recipe) => Recipe.fromMap(recipe)).toList();
@@ -109,7 +106,7 @@ class CategoryRepository {
 
   Future<List<Category>> searchByName(String name) async {
     final categoriesDB = await _db.searchByName(
-      CategoryRepository.table,
+      CategoryService.table,
       'name',
       name,
     );
