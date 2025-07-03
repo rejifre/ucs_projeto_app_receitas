@@ -8,7 +8,6 @@ plugins {
 android {
     namespace = "com.example.ucs_projeto_app_receitas"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
