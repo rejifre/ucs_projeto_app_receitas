@@ -52,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<RecipesProvider>(context);
-    final _recipes = provider.recipes;
+    final recipes = provider.recipes;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -75,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: _recipes.length,
+              itemCount: recipes.length,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -87,9 +87,9 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: TextStyle(color: AppColors.lightBackgroundColor),
                       ),
                     ),
-                    title: Text(_recipes[index].title),
+                    title: Text(recipes[index].title),
                     subtitle: Text(
-                      "${_recipes[index].ingredients.length} ingredientes.",
+                      "${recipes[index].ingredients.length} ingredientes.",
                     ),
                     tileColor: AppColors.lightBackgroundColor,
                     trailing: Row(
@@ -97,10 +97,10 @@ class _SearchScreenState extends State<SearchScreen> {
                       spacing: 5,
                       children: [
                         Icon(Icons.timer_sharp, size: 15),
-                        Text(_recipes[index].preparationTime),
+                        Text(recipes[index].preparationTime),
                       ],
                     ),
-                    onTap: () => _navigateToDetail(_recipes[index].id),
+                    onTap: () => _navigateToDetail(recipes[index].id),
                   ),
                 );
               },
