@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/categories_provider.dart';
 import 'routes/routes.dart';
-import 'screens/categories/categories_screen_widget.dart';
-import 'screens/categories/edit_category_screen.dart';
-import 'screens/recipes/edit_recipe_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/recipes/recipe_detail_screen.dart';
 import 'providers/recipes_provider.dart';
-import 'screens/search_screen.dart';
-import 'screens/splash_screen.dart';
 import 'ui/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -42,15 +35,7 @@ class MyApp extends StatelessWidget {
         initialRoute: Routes.initial,
         navigatorKey: Routes.navigation,
         theme: AppTheme.appTheme,
-        routes: {
-          Routes.initial: (context) => const SplashScreen(),
-          Routes.home: (context) => const HomeScreen(),
-          Routes.recipe: (context) => const RecipeDetailScreen(),
-          Routes.editRecipe: (context) => EditRecipeScreen(),
-          Routes.categoriesScreen: (context) => const CategoriesScreenWidget(),
-          Routes.editCategory: (context) => const EditCategoryScreen(),
-          Routes.search: (context) => const SearchScreen(),
-        },
+        onGenerateRoute: Routes.generateRoute,
       ),
     );
   }
