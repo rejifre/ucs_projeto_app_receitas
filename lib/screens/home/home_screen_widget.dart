@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/recipe_model.dart';
-import '../routes/routes.dart';
-import '../providers/recipes_provider.dart';
-import '../ui/app_colors.dart';
+import '../../models/recipe_model.dart';
+import '../../routes/routes.dart';
+import '../../providers/recipes_provider.dart';
+import '../../ui/app_colors.dart';
 
 class HomeScreenWidget extends StatefulWidget {
   const HomeScreenWidget({super.key});

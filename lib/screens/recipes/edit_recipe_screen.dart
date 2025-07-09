@@ -12,7 +12,7 @@ import '../../routes/routes.dart';
 import '../../repositories/security_auth_repository.dart';
 import '../../services/recipe_generator_service.dart';
 import '../../ui/app_colors.dart';
-import '../../ui/recipe_screen_type.dart';
+import '../../utils/recipe_screen_type.dart';
 import 'edit_form_ingredient_list_widget.dart';
 import 'edit_form_instruction_list_widget.dart';
 

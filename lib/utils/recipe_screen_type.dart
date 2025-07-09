@@ -1,4 +1,4 @@
-abstract class RecipeScreenType {
+class RecipeScreenType {
   static const newRecipe = 'Nova Receita';
   static const editRecipe = "Editar Receita";
 }
