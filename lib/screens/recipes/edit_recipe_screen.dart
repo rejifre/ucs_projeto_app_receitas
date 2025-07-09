@@ -9,6 +9,7 @@ import '../../models/instruction_model.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/recipes_provider.dart';
 import '../../routes/routes.dart';
+import '../../repositories/security_auth_repository.dart';
 import '../../services/recipe_generator_service.dart';
 import '../../ui/app_colors.dart';
 import '../../ui/recipe_screen_type.dart';
@@ -73,7 +74,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
     return DateFormat('dd/MM/yyyy HH:mm').format(now.toUtc());
   }
 
-  void _confirmDeleteRecipe() {
+  Future<void> _confirmDeleteRecipe() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -92,12 +93,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
             TextButton(
               child: const Text('Deletar'),
               onPressed: () async {
-                final provider = Provider.of<RecipesProvider>(
-                  context,
-                  listen: false,
-                );
-                Navigator.popUntil(context, ModalRoute.withName(Routes.home));
-                await provider.deleteRecipe(_idController.text);
+                Navigator.of(context).pop(); // Fecha o dialog de confirmação
+                await _authenticateAndDelete();
               },
             ),
           ],
@@ -188,6 +185,53 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
           duration: Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  /// Autentica o usuário usando biometria ou PIN/padrão/senha
+  /// e, se bem-sucedido, deleta a receita.
+  Future<void> _authenticateAndDelete() async {
+    final authService = SecurityAuthRepository();
+
+    // Solicita autenticação
+    final result = await authService.authenticate(
+      localizedReason: 'Autentique-se para deletar a receita',
+      biometricOnly: false, // Permite biometria, PIN, padrão ou senha
+      stickyAuth: true,
+    );
+
+    if (!mounted) return;
+
+    switch (result) {
+      case SecurityAuthResult.success:
+        // Autenticação bem-sucedida, procede com a exclusão
+        final provider = Provider.of<RecipesProvider>(context, listen: false);
+        await provider.deleteRecipe(_idController.text);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Receita deletada com sucesso."),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Navega de volta para a tela inicial
+          Navigator.popUntil(context, ModalRoute.withName(Routes.home));
+        }
+        break;
+
+      case SecurityAuthResult.failed:
+      case SecurityAuthResult.unavailable:
+      case SecurityAuthResult.error:
+        // Exibe mensagem de erro apropriada
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authService.getResultMessage(result)),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        break;
     }
   }
 
