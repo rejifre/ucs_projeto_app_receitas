@@ -44,6 +44,7 @@ dependencies:
   http: ^1.4.0
   flutter_colorpicker: ^1.1.0
   local_auth: ^2.3.0
+  flutter_local_notifications: ^19.3.0
 
 dev_dependencies:
   flutter_test:
