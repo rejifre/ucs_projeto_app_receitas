@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/settings_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/login/auth_wrapper_widget.dart';
 import '../screens/home/home_screen.dart';
@@ -24,10 +25,11 @@ class Routes {
   static const String editCategory = '/editCategory';
   static const String login = '/login';
   static const String userProfile = '/profile';
+  static const String settings = '/settings';
 
   // Método para gerar rotas dinamicamente
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
+  static Route<dynamic> generateRoute(RouteSettings routeSettings) {
+    switch (routeSettings.name) {
       case initial:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
 
@@ -40,7 +42,7 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       case recipeDetail:
-        final String? recipeId = settings.arguments as String?;
+        final String? recipeId = routeSettings.arguments as String?;
         return MaterialPageRoute(
           builder: (_) => RecipeDetailScreen(recipeId: recipeId),
         );
@@ -48,7 +50,7 @@ class Routes {
       case editRecipe:
         return MaterialPageRoute(
           builder: (_) => const EditRecipeScreen(),
-          settings: settings,
+          settings: routeSettings,
         );
 
       case categoriesScreen:
@@ -59,7 +61,7 @@ class Routes {
       case editCategory:
         return MaterialPageRoute(
           builder: (_) => const EditCategoryScreen(),
-          settings: settings,
+          settings: routeSettings,
         );
 
       case search:
@@ -78,12 +80,15 @@ class Routes {
       case userProfile:
         return MaterialPageRoute(builder: (_) => const UserProfileScreen());
 
+      case settings:
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
+
       default:
         return MaterialPageRoute(
           builder:
               (_) => Scaffold(
                 body: Center(
-                  child: Text('Rota não encontrada: ${settings.name}'),
+                  child: Text('Rota não encontrada: ${routeSettings.name}'),
                 ),
               ),
         );

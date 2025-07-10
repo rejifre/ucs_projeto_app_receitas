@@ -14,6 +14,11 @@ class CategoryService {
     return await _db.insert(CategoryService.table, category.toMap());
   }
 
+  // Método para inserção com substituição em caso de conflito (usado na restauração)
+  Future<int> insertOrReplace(Category category) async {
+    return await _db.insertOrReplace(CategoryService.table, category.toMap());
+  }
+
   Future<int> update(Category category) async {
     return await _db.update(CategoryService.table, category.toMap(), 'id = ?', [
       category.id,
@@ -111,5 +116,9 @@ class CategoryService {
       name,
     );
     return categoriesDB.map((item) => Category.fromMap(item)).toList();
+  }
+
+  Future<int> deleteAll() async {
+    return await _db.deleteAll(CategoryService.table);
   }
 }

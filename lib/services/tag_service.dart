@@ -14,6 +14,11 @@ class TagService {
     return await _db.insert(TagService.table, tag.toMap());
   }
 
+  // Método para inserção com substituição em caso de conflito (usado na restauração)
+  Future<int> insertOrReplace(Tag tag) async {
+    return await _db.insertOrReplace(TagService.table, tag.toMap());
+  }
+
   Future<int> update(Tag tag) async {
     return await _db.update(TagService.table, tag.toMap(), 'id = ?', [tag.id]);
   }
@@ -108,5 +113,9 @@ class TagService {
   Future<List<Recipe>> searchByName(String name) async {
     final recipesDB = await _db.searchByName(TagService.table, 'name', name);
     return recipesDB.map((item) => Recipe.fromMap(item)).toList();
+  }
+
+  Future<int> deleteAll() async {
+    return await _db.deleteAll(TagService.table);
   }
 }

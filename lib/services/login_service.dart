@@ -66,6 +66,7 @@ class LoginService {
         password: password,
       );
       await _auth.currentUser!.delete();
+      return 'Conta deletada com sucesso';
     } on FirebaseAuthException catch (e) {
       throw _getFirebaseAuthErrorMessage(e);
     }

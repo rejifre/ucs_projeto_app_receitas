@@ -55,10 +55,10 @@ class RecipesRepository {
   }
 
   Future<void> _getRecipeInfo(Recipe recipe) async {
-    final ingredients = await _ingredientService.getAll(recipe.id);
+    final ingredients = await _ingredientService.getAllByRecipeId(recipe.id);
     recipe.ingredients = [...ingredients];
 
-    final steps = await _instructionService.getAll(recipe.id);
+    final steps = await _instructionService.getAllByRecipeId(recipe.id);
     recipe.steps = [...steps];
   }
 

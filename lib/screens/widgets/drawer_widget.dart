@@ -67,7 +67,7 @@ class DrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('Configurações'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pushNamed(context, Routes.settings);
             },
           ),
           const Divider(),

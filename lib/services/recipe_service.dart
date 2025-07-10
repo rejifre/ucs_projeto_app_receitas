@@ -10,6 +10,11 @@ class RecipeService {
     await _db.insert(table, recipe.toMap());
   }
 
+  // Método para inserção com substituição em caso de conflito (usado na restauração)
+  Future<void> insertOrReplace(Recipe recipe) async {
+    await _db.insertOrReplace(table, recipe.toMap());
+  }
+
   Future<void> update(Recipe recipe) async {
     await _db.update(table, recipe.toMap(), 'id = ?', [recipe.id]);
   }
@@ -45,5 +50,9 @@ class RecipeService {
       name,
     );
     return recipesDB.map((item) => Recipe.fromMap(item)).toList();
+  }
+
+  Future<int> deleteAll() async {
+    return await _db.deleteAll(RecipeService.table);
   }
 }

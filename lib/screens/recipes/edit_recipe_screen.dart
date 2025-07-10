@@ -217,7 +217,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
           );
 
           // Navega de volta para a tela inicial
-          Navigator.popUntil(context, ModalRoute.withName(Routes.home));
+          Navigator.pushReplacementNamed(context, Routes.home);
         }
         break;
 

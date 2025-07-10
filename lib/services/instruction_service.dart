@@ -10,6 +10,11 @@ class InstructionService {
     return await _db.insert(table, instruction.toMap());
   }
 
+  // Método para inserção com substituição em caso de conflito (usado na restauração)
+  Future<int> insertOrReplace(Instruction instruction) async {
+    return await _db.insertOrReplace(table, instruction.toMap());
+  }
+
   Future<void> update(String recipeId, List<Instruction> instructions) async {
     deleteByRecipeId(recipeId);
 
@@ -35,7 +40,7 @@ class InstructionService {
     return null;
   }
 
-  Future<List<Instruction>> getAll(String recipeId) async {
+  Future<List<Instruction>> getAllByRecipeId(String recipeId) async {
     List<Map<String, dynamic>> instructionsDB = await _db.getAll(
       table,
       condition: 'recipe_id = ?',
@@ -50,5 +55,21 @@ class InstructionService {
     }
 
     return steps;
+  }
+
+  Future<List<Instruction>> getAll() async {
+    List<Map<String, dynamic>> instructionsDB = await _db.getAll(table);
+    List<Instruction> instructions = [];
+
+    for (var item in instructionsDB) {
+      Instruction instruction = Instruction.fromMap(item);
+      instructions.add(instruction);
+    }
+
+    return instructions;
+  }
+
+  Future<int> deleteAll() async {
+    return await _db.deleteAll(InstructionService.table);
   }
 }

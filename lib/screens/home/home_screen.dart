@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ucs_projeto_app_receitas/screens/categories/categories_screen_widget.dart';
 import 'package:ucs_projeto_app_receitas/screens/favorites_screen.dart';
 import 'package:ucs_projeto_app_receitas/screens/search_screen.dart';
-import 'package:ucs_projeto_app_receitas/screens/user_profile_screen.dart';
 import 'package:ucs_projeto_app_receitas/screens/widgets/drawer_widget.dart';
 import '../../routes/routes.dart';
 import '../../ui/app_colors.dart';

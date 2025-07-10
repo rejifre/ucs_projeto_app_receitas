@@ -50,6 +50,16 @@ class DatabaseHelper {
     return await db.insert(table, data);
   }
 
+  // Método que usa INSERT OR REPLACE para evitar conflitos de primary key
+  Future<int> insertOrReplace(String table, Map<String, Object?> data) async {
+    final db = await database;
+    return await db.insert(
+      table,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<int> update(
     String table,
     Map<String, dynamic> data,
@@ -112,5 +122,10 @@ class DatabaseHelper {
       where: '$nameColumn LIKE ?',
       whereArgs: ['%$name%'],
     );
+  }
+
+  Future<int> deleteAll(String table) async {
+    final db = await database;
+    return await db.delete(table);
   }
 }
