@@ -4,6 +4,7 @@ import '../../ui/app_colors.dart';
 import '../categories/categories_screen_widget.dart';
 import '../favorites_screen.dart';
 import '../search_screen.dart';
+import '../widgets/drawer_widget.dart';
 import 'home_screen_widget.dart';
 
 class HomeScreen extends StatefulWidget {
