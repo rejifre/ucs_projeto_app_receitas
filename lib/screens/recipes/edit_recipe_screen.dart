@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:ucs_projeto_app_receitas/models/category_model.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/ingredient_model.dart';
 import '../../models/instruction_model.dart';
 import '../../models/recipe_model.dart';
+import '../../models/tag_model.dart';
 import '../../providers/categories_provider.dart';
 import '../../providers/recipes_provider.dart';
 import '../../providers/tags_provider.dart';
@@ -160,31 +162,15 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<RecipesProvider>(context, listen: false);
-      final tagsProvider = Provider.of<TagsProvider>(context, listen: false);
-      final categoriesProvider = Provider.of<CategoriesProvider>(
+      final tagProvider = Provider.of<TagsProvider>(context, listen: false);
+      final categoryProvider = Provider.of<CategoriesProvider>(
         context,
         listen: false,
       );
       _formKey.currentState!.save();
 
-      // Proteja contra null nos keys dos widgets
-      final ingredientControllers = _ingredientListKey.currentState;
-      final instructionControllers = _instructionListKey.currentState;
-      final tagsWidgetState = _tagsListKey.currentState;
-      final categoryWidgetState = _categoryListKey.currentState;
-
-      if (ingredientControllers == null ||
-          instructionControllers == null ||
-          tagsWidgetState == null ||
-          categoryWidgetState == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Erro interno: componentes não inicializados."),
-            duration: Duration(seconds: 2),
-          ),
-        );
-        return;
-      }
+      final ingredientControllers = _ingredientListKey.currentState!;
+      final instructionControllers = _instructionListKey.currentState!;
 
       final ingredients = List.generate(
         ingredientControllers.ingredientNameControllers.length,
@@ -207,16 +193,16 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ),
       );
 
-      final selectedTagIds = tagsWidgetState.selectedTagIds;
-      final selectedTags =
-          tagsProvider.tags
-              .where((tag) => selectedTagIds.contains(tag.id))
+      final tags =
+          _selectedTagIds
+              .map((tagId) => tagProvider.getTagById(tagId))
+              .whereType<Tag>()
               .toList();
 
-      final selectedCategoryIds = categoryWidgetState.selectedCategoryIds;
-      final selectedCategories =
-          categoriesProvider.categories
-              .where((category) => selectedCategoryIds.contains(category.id))
+      final categories =
+          _selectedCategoryIds
+              .map((categoryId) => categoryProvider.getCategoryById(categoryId))
+              .whereType<CategoryModel>()
               .toList();
 
       final updatedRecipe = Recipe(
@@ -228,8 +214,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ingredients: ingredients,
         steps: instructions,
         date: _getDate(),
-        tags: selectedTags,
-        categories: selectedCategories,
+        tags: tags,
+        categories: categories,
       );
       final sm = ScaffoldMessenger.of(context);
 
