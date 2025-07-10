@@ -10,23 +10,23 @@ class CategoryService {
   static const String recipeId = 'recipe_id';
   static const String categoryId = 'category_id';
 
-  Future<int> insert(Category category) async {
+  Future<int> insert(CategoryModel category) async {
     return await _db.insert(CategoryService.table, category.toMap());
   }
 
   // Método para inserção com substituição em caso de conflito (usado na restauração)
-  Future<int> insertOrReplace(Category category) async {
+  Future<int> insertOrReplace(CategoryModel category) async {
     return await _db.insertOrReplace(CategoryService.table, category.toMap());
   }
 
-  Future<int> update(Category category) async {
+  Future<int> update(CategoryModel category) async {
     return await _db.update(CategoryService.table, category.toMap(), 'id = ?', [
       category.id,
     ]);
   }
 
   Future<int> delete(String id) async {
-    // Verifica se a tag está associada a alguma receita
+    // Verifica se a categoria está associada a alguma receita
     final associations = await _db.rawQuery(
       'SELECT 1 FROM ${CategoryService.tableRecipeCategories} WHERE ${CategoryService.categoryId} = ? LIMIT 1',
       [id],
@@ -39,19 +39,21 @@ class CategoryService {
     return await _db.delete(CategoryService.table, 'id = ?', [id]);
   }
 
-  Future<Category?> getById(String id) async {
+  Future<CategoryModel?> getById(String id) async {
     final category = await _db.getById(CategoryService.table, id);
     if (category != null && category.isNotEmpty) {
-      return Category.fromMap(category);
+      return CategoryModel.fromMap(category);
     }
     return null;
   }
 
-  Future<List<Category>> getAll() async {
+  Future<List<CategoryModel>> getAll() async {
     List<Map<String, dynamic>> categoriesDB = await _db.getAll(
       CategoryService.table,
     );
-    return categoriesDB.map((category) => Category.fromMap(category)).toList();
+    return categoriesDB
+        .map((category) => CategoryModel.fromMap(category))
+        .toList();
   }
 
   Future<int> associateCategoryWithRecipe(int recipeId, int categoryId) async {
@@ -77,14 +79,16 @@ class CategoryService {
     return result;
   }
 
-  Future<List<Category>> getCategoriesByRecipeId(int recipeId) async {
+  Future<List<CategoryModel>> getCategoriesByRecipeId(int recipeId) async {
     final categories = await _db.rawQuery(
       'SELECT c.* FROM ${CategoryService.table} c '
       'JOIN ${CategoryService.tableRecipeCategories} rc '
       'ON c.id = rc.category_id WHERE rc.recipe_id = ?',
       [recipeId],
     );
-    return categories.map((category) => Category.fromMap(category)).toList();
+    return categories
+        .map((category) => CategoryModel.fromMap(category))
+        .toList();
   }
 
   Future<List<Recipe>> getRecipesByCategoryId(int categoryId) async {
@@ -109,13 +113,13 @@ class CategoryService {
     return recipes.map((recipe) => Recipe.fromMap(recipe)).toList();
   }
 
-  Future<List<Category>> searchByName(String name) async {
+  Future<List<CategoryModel>> searchByName(String name) async {
     final categoriesDB = await _db.searchByName(
       CategoryService.table,
       'name',
       name,
     );
-    return categoriesDB.map((item) => Category.fromMap(item)).toList();
+    return categoriesDB.map((item) => CategoryModel.fromMap(item)).toList();
   }
 
   Future<int> deleteAll() async {

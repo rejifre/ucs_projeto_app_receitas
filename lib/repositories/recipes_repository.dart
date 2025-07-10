@@ -1,14 +1,20 @@
 import 'package:logger/logger.dart';
+import 'package:ucs_projeto_app_receitas/models/tag_model.dart';
 import '../models/recipe_model.dart';
 import '../services/instruction_service.dart';
 import '../services/ingredient_service.dart';
 import '../services/recipe_generator_service.dart';
 import '../services/recipe_service.dart';
+import '../services/recipe_tag_service.dart';
+import '../services/tag_service.dart';
 
 class RecipesRepository {
   final RecipeService _recipeService = RecipeService();
   final IngredientService _ingredientService = IngredientService();
   final InstructionService _instructionService = InstructionService();
+  final TagService _tagsService = TagService();
+  final RecipeTagService _recipeTagService = RecipeTagService();
+
   final RecipeGeneratorService _recipeGeneratorService =
       RecipeGeneratorService();
   final logger = Logger();
@@ -35,6 +41,10 @@ class RecipesRepository {
       await _instructionService.insert(step);
     }
 
+    for (var tag in recipe.tags) {
+      await _recipeTagService.associateTagWithRecipe(recipe.id, tag.id);
+    }
+
     logger.i('added recipe');
   }
 
@@ -42,14 +52,31 @@ class RecipesRepository {
     await _recipeService.update(recipe);
     await _ingredientService.update(recipe.id, recipe.ingredients);
     await _instructionService.update(recipe.id, recipe.steps);
+    await _tagsService.updateRecipeTags(
+      recipe.id,
+      recipe.tags.map((tag) => tag.id).toList(),
+    );
 
     logger.i('update recipe');
   }
 
   Future<void> deleteRecipe(String recipeId) async {
+    if (recipeId.isEmpty) {
+      throw Exception('Recipe ID cannot be empty');
+    }
+    final recipe = await getRecipeById(recipeId);
+    if (recipe == null) {
+      throw Exception('Recipe not found');
+    }
+
     await _recipeService.delete(recipeId);
     await _ingredientService.deleteByRecipeId(recipeId);
     await _instructionService.deleteByRecipeId(recipeId);
+    await _recipeTagService.removeTagsByRecipeId(recipeId);
+
+    for (var tag in recipe.tags) {
+      await _tagsService.dissociateTagFromRecipe(recipeId, tag.id);
+    }
 
     logger.i('Delete Recipe');
   }
@@ -60,6 +87,9 @@ class RecipesRepository {
 
     final steps = await _instructionService.getAllByRecipeId(recipe.id);
     recipe.steps = [...steps];
+
+    final tags = await _tagsService.getTagsByRecipeId(recipe.id);
+    recipe.tags = [...tags];
   }
 
   Future<List<Recipe>> getAllRecipes() async {

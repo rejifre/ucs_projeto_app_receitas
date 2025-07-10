@@ -1,8 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+
+import 'category_model.dart';
 import 'ingredient_model.dart';
 import 'instruction_model.dart';
+import 'tag_model.dart';
 
 class Recipe {
   String id;
@@ -13,6 +16,9 @@ class Recipe {
   String preparationTime;
   List<Ingredient> ingredients;
   List<Instruction> steps;
+  List<Tag> tags = [];
+  List<CategoryModel> categories = [];
+
   Recipe({
     required this.id,
     required this.title,
@@ -22,6 +28,8 @@ class Recipe {
     required this.preparationTime,
     this.ingredients = const [],
     this.steps = const [],
+    this.tags = const [],
+    this.categories = const [],
   });
 
   Recipe copyWith({
@@ -33,6 +41,8 @@ class Recipe {
     String? preparationTime,
     List<Ingredient>? ingredients,
     List<Instruction>? steps,
+    List<Tag>? tags,
+    List<CategoryModel>? categories,
   }) {
     return Recipe(
       id: id ?? this.id,
@@ -43,6 +53,8 @@ class Recipe {
       preparationTime: preparationTime ?? this.preparationTime,
       ingredients: ingredients ?? this.ingredients,
       steps: steps ?? this.steps,
+      tags: tags ?? this.tags,
+      categories: categories ?? this.categories,
     );
   }
 
@@ -75,7 +87,7 @@ class Recipe {
 
   @override
   String toString() {
-    return 'Recipe(id: $id, title: $title, description: $description, score: $score, date: $date, preparationTime: $preparationTime, ingredients: $ingredients, steps: $steps)';
+    return 'Recipe(id: $id, title: $title, description: $description, score: $score, date: $date, preparationTime: $preparationTime, ingredients: $ingredients, steps: $steps, tags: $tags, categories: $categories)';
   }
 
   @override
@@ -89,7 +101,9 @@ class Recipe {
         other.date == date &&
         other.preparationTime == preparationTime &&
         listEquals(other.ingredients, ingredients) &&
-        listEquals(other.steps, steps);
+        listEquals(other.steps, steps) &&
+        listEquals(other.tags, tags) &&
+        listEquals(other.categories, categories);
   }
 
   @override
@@ -101,6 +115,8 @@ class Recipe {
         date.hashCode ^
         preparationTime.hashCode ^
         ingredients.hashCode ^
-        steps.hashCode;
+        steps.hashCode ^
+        tags.hashCode ^
+        categories.hashCode;
   }
 }

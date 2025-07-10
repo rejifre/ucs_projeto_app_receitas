@@ -5,6 +5,7 @@ class RecipeService {
   static final DatabaseHelper _db = DatabaseHelper();
 
   static const String table = 'recipes';
+  static const String tableRecipeTag = 'recipe_tags';
 
   Future<void> insert(Recipe recipe) async {
     await _db.insert(table, recipe.toMap());

@@ -7,7 +7,7 @@ class RecipeSql {
         description TEXT,
         score REAL,
         date TEXT,
-        preparationTime TEXT
+        preparationTime TEXT,
       )
     ''';
   }

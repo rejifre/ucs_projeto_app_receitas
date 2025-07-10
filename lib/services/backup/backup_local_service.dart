@@ -256,7 +256,7 @@ class BackupLocalService {
 
         for (final categoryJson in categoriesData) {
           try {
-            final category = Category.fromMap(
+            final category = CategoryModel.fromMap(
               categoryJson as Map<String, dynamic>,
             );
             await _categoryService.insertOrReplace(category);

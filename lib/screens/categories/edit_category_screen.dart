@@ -18,13 +18,14 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
   final TextEditingController _idController = TextEditingController();
   final _uuid = const Uuid();
   var isEditing = false;
-  Category? _category;
+  CategoryModel? _category;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_category == null) {
-      final category = ModalRoute.of(context)!.settings.arguments as Category?;
+      final category =
+          ModalRoute.of(context)!.settings.arguments as CategoryModel?;
       isEditing = category?.id != null;
       _idController.text = category?.id ?? _uuid.v4();
       _nameController.text = category?.name ?? '';
@@ -55,7 +56,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
   }
 
   void _saveCategory() {
-    final category = Category(
+    final category = CategoryModel(
       id: _idController.text,
       name: _nameController.text,
     );

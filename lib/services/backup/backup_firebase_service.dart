@@ -151,7 +151,7 @@ class BackupFirebaseService {
       if (categoriesDoc.exists) {
         final categoriesData = categoriesDoc.data()!['data'] as List<dynamic>;
         for (final categoryJson in categoriesData) {
-          final category = Category.fromMap(categoryJson);
+          final category = CategoryModel.fromMap(categoryJson);
           await _categoryService.insertOrReplace(category);
         }
         totalRestored += categoriesData.length;

@@ -44,7 +44,7 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
     _loadCategories(query: _searchController.text);
   }
 
-  void _edit(BuildContext context, Category category) async {
+  void _edit(BuildContext context, CategoryModel category) async {
     await Navigator.pushNamed(
       context,
       Routes.editCategory,
@@ -87,7 +87,7 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
             child: ListView.builder(
               itemCount: categories.length,
               itemBuilder: (context, index) {
-                Category category = categories[index];
+                CategoryModel category = categories[index];
                 return Card(
                   color: Colors.green,
                   margin: const EdgeInsets.all(8),

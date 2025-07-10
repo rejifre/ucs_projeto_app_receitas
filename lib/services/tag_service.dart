@@ -50,7 +50,7 @@ class TagService {
     return tagsDB.map((tag) => Tag.fromMap(tag)).toList();
   }
 
-  Future<int> associateTagWithRecipe(int recipeId, int tagId) async {
+  Future<int> associateTagWithRecipe(String recipeId, String tagId) async {
     final result = await _db.insert(TagService.tableRecipeTags, {
       TagService.recipeId: recipeId,
       TagService.tagId: tagId,
@@ -61,19 +61,16 @@ class TagService {
     return result;
   }
 
-  Future<int> dissociateTagFromRecipe(int recipeId, int tagId) async {
+  Future<int> dissociateTagFromRecipe(String recipeId, String tagId) async {
     final result = await _db.delete(
       TagService.tableRecipeTags,
       '${TagService.recipeId} = ? AND ${TagService.tagId} = ?',
       [recipeId, tagId],
     );
-    if (result == 0) {
-      throw Exception('Failed to dissociate tag from recipe');
-    }
     return result;
   }
 
-  Future<List<Tag>> getTagsByRecipeId(int recipeId) async {
+  Future<List<Tag>> getTagsByRecipeId(String recipeId) async {
     final List<Map<String, dynamic>> result = await _db.rawQuery(
       '''
       SELECT t.* FROM ${TagService.table} t
@@ -82,8 +79,23 @@ class TagService {
     ''',
       [recipeId],
     );
-
     return result.map((tagMap) => Tag.fromMap(tagMap)).toList();
+  }
+
+  /// Atualiza as associações de tags de uma receita:
+  /// Remove todas as associações antigas e insere as novas.
+  Future<void> updateRecipeTags(String recipeId, List<String> tagIds) async {
+    // Remove todas as associações antigas
+    await _db.delete(TagService.tableRecipeTags, '${TagService.recipeId} = ?', [
+      recipeId,
+    ]);
+    // Insere as novas associações
+    for (final tagId in tagIds) {
+      await _db.insert(TagService.tableRecipeTags, {
+        TagService.recipeId: recipeId,
+        TagService.tagId: tagId,
+      });
+    }
   }
 
   // Para buscar receitas por uma única tag
@@ -116,6 +128,15 @@ class TagService {
   }
 
   Future<int> deleteAll() async {
+    // Verifica se existem associações antes de deletar
+    final associations = await _db.rawQuery(
+      'SELECT 1 FROM ${TagService.tableRecipeTags} LIMIT 1',
+    );
+    if (associations.isNotEmpty) {
+      throw Exception(
+        'Não é possível deletar: existem associações com receitas.',
+      );
+    }
     return await _db.deleteAll(TagService.table);
   }
 }

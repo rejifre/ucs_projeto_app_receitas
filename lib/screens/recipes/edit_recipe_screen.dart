@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:ucs_projeto_app_receitas/screens/recipes/edit_form_tags_widget.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/ingredient_model.dart';
 import '../../models/instruction_model.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/recipes_provider.dart';
+import '../../providers/tags_provider.dart';
 import '../../routes/routes.dart';
 import '../../repositories/security_auth_repository.dart';
 import '../../services/recipe_generator_service.dart';
@@ -29,6 +31,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       GlobalKey<EditFormIngredientListWidgetState>();
   final GlobalKey<EditFormInstructionListWidgetState> _instructionListKey =
       GlobalKey<EditFormInstructionListWidgetState>();
+  final GlobalKey<EditFormTagsWidgetState> _tagsListKey =
+      GlobalKey<EditFormTagsWidgetState>();
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
@@ -42,9 +46,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
   Recipe? _currentRecipe;
   bool _isInitialized = false;
 
+  // Armazena os IDs das tags selecionadas
+  List<String> _selectedTagIds = [];
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Pegue as tags do provider sempre que o widget for reconstruído
     if (!_isInitialized) {
       _currentRecipe = ModalRoute.of(context)?.settings.arguments as Recipe?;
       _idController.text = _currentRecipe?.id ?? _uuid.v4().toString();
@@ -54,7 +62,9 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       _preparationTimeController.text =
           _currentRecipe?.preparationTime ?? '0h 0m';
       _currentDate = _currentRecipe?.date ?? _getDate();
-
+      // Inicializa as tags selecionadas
+      _selectedTagIds =
+          _currentRecipe?.tags.map((tag) => tag.id).toList() ?? [];
       _isInitialized = true;
     }
   }
@@ -125,6 +135,9 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         generateRecipe.ingredients,
       );
       _instructionListKey.currentState?.setInstructions(generateRecipe.steps);
+      _tagsListKey.currentState?.setTags(
+        generateRecipe.tags.map((tag) => tag.id).toList(),
+      );
 
       setState(() {
         _currentRecipe = generateRecipe;
@@ -136,6 +149,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<RecipesProvider>(context, listen: false);
+      final tagsProvider = Provider.of<TagsProvider>(context, listen: false);
       _formKey.currentState!.save();
 
       final ingredientControllers = _ingredientListKey.currentState!;
@@ -162,6 +176,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ),
       );
 
+      // Corrija: sempre obtenha as tags selecionadas do widget de tags
+      final selectedTagIds = _tagsListKey.currentState?.selectedTagIds ?? [];
+      final selectedTags =
+          tagsProvider.tags
+              .where((tag) => selectedTagIds.contains(tag.id))
+              .toList();
+
       final updatedRecipe = Recipe(
         id: _idController.text,
         title: _titleController.text,
@@ -171,6 +192,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ingredients: ingredients,
         steps: instructions,
         date: _getDate(),
+        tags: selectedTags,
       );
       final sm = ScaffoldMessenger.of(context);
 
@@ -333,10 +355,20 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                   initialInstructions: _currentRecipe?.steps ?? [],
                 ),
               ),
+              EditFormTagsWidget(
+                key: _tagsListKey,
+                initialTagIds: _selectedTagIds,
+                onTagsChanged: (tags) {
+                  setState(() {
+                    _selectedTagIds = tags;
+                  });
+                },
+              ),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Salvar Receita'),
               ),
+              const SizedBox(height: 30),
             ],
           ),
         ),

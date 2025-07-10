@@ -4,9 +4,9 @@ import '../repositories/categories_repository.dart';
 
 class CategoriesProvider with ChangeNotifier {
   final CategoriesRepository _service = CategoriesRepository();
-  List<Category> _categories = [];
+  List<CategoryModel> _categories = [];
 
-  List<Category> get categories => _categories;
+  List<CategoryModel> get categories => _categories;
 
   CategoriesProvider() {
     loadCategories();
@@ -22,7 +22,7 @@ class CategoriesProvider with ChangeNotifier {
     await loadCategories(); // Atualiza a lista
   }
 
-  Future<void> addOrUpdateCategory(Category category) async {
+  Future<void> addOrUpdateCategory(CategoryModel category) async {
     if (_categories.any((c) => c.id == category.id)) {
       // Se a categoria já existe, atualiza-a
       await _service.updateCategory(category);
@@ -33,11 +33,11 @@ class CategoriesProvider with ChangeNotifier {
     await loadCategories();
   }
 
-  Future<Category?> getCategoryById(String id) async {
+  Future<CategoryModel?> getCategoryById(String id) async {
     return await _service.getCategoryById(id);
   }
 
-  Future<List<Category>> searchCategories(String query) async {
+  Future<List<CategoryModel>> searchCategories(String query) async {
     _categories = await _service.filter(query);
     notifyListeners();
     return _categories;
