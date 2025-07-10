@@ -24,9 +24,14 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final recipeProvider = Provider.of<RecipesProvider>(context);
-    _recipes = recipeProvider.recipes;
+    final recipeProvider = context.watch<RecipesProvider>().recipes;
+    _recipes = recipeProvider;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.0),

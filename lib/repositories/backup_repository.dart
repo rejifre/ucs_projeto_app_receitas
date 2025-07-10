@@ -1,25 +1,21 @@
 import 'package:logger/logger.dart';
 import '../services/backup/backup_firebase_service.dart';
 import '../services/backup/backup_local_service.dart';
-import '../services/file_picker_service.dart';
 
 /// Repository central para operações de backup e restore
 
 class BackupRepository {
   final BackupLocalService _backupLocalService;
   final BackupFirebaseService _backupFirebaseService;
-  final FilePickerService _filePickerService;
   final Logger _logger;
 
   BackupRepository({
     BackupLocalService? backupLocalService,
     BackupFirebaseService? backupFirebaseService,
-    FilePickerService? filePickerService,
     Logger? logger,
   }) : _backupLocalService = backupLocalService ?? BackupLocalService(),
        _backupFirebaseService =
            backupFirebaseService ?? BackupFirebaseService(),
-       _filePickerService = filePickerService ?? FilePickerService(),
        _logger = logger ?? Logger();
 
   // ==================== BACKUP LOCAL ====================
@@ -43,7 +39,7 @@ class BackupRepository {
   /// Returns: `true` se a restauração foi realizada com sucesso, `false` caso contrário
   Future<bool> restoreFromLocalFile(String filePath) async {
     try {
-      final result = await _filePickerService.restoreFromFile(filePath);
+      final result = await _backupLocalService.restoreFromLocalFile(filePath);
       return result;
     } catch (e) {
       _logger.e('Erro no repository ao restaurar arquivo local: $e');
@@ -57,7 +53,7 @@ class BackupRepository {
   /// Returns: `true` se a restauração foi realizada com sucesso, `false` caso contrário
   Future<bool> selectAndRestoreFromFile() async {
     try {
-      final result = await _filePickerService.selectAndRestoreFromFile();
+      final result = await _backupLocalService.selectAndRestoreFromFile();
 
       return result;
     } catch (e) {

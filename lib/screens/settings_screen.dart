@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../repositories/backup_repository.dart';
+import 'package:provider/provider.dart';
+import '../providers/recipes_provider.dart';
+import '../repositories/backup_repository.dart'; // Certifique-se de que este caminho está correto
 
 /// Exemplo de tela demonstrando como usar o BackupRepository
 ///
@@ -60,6 +62,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     try {
       final success = await _backupRepository.backupToLocalFile();
+
       await _showMessage(
         success
             ? 'Backup local realizado com sucesso!'
@@ -86,6 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
       if (success) {
+        updateRecipesProvider(); // Atualiza as receitas no provider
         await _loadBackupStatus(); // Atualiza status após restauração
       }
     } catch (e) {
@@ -93,6 +97,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  updateRecipesProvider() {
+    // Atualiza as receitas no provider
+    Provider.of<RecipesProvider>(context, listen: false).loadRecipes();
   }
 
   Future<void> _backupToFirestore() async {
@@ -130,6 +139,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
       if (success) {
+        updateRecipesProvider(); // Atualiza as receitas no provider
         await _loadBackupStatus(); // Atualiza status após restauração
       }
     } catch (e) {
@@ -258,7 +268,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               if (_backupStatus!['firestore']['info'] != null)
                                 Text(
-                                  'Última atualização: ${_backupStatus!['firestore']['info']['createdAt'] ?? 'N/A'}',
+                                  'Última atualização: ${_backupStatus!['firestore']['info']['timestamp'] ?? 'N/A'}',
                                 ),
                               const SizedBox(height: 4),
                               Text(
@@ -370,17 +380,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ],
                             ),
-                            // const SizedBox(height: 8),
-                            // ElevatedButton.icon(
-                            //   onPressed:
-                            //       _isLoading ? null : _deleteFirestoreBackup,
-                            //   icon: const Icon(Icons.delete),
-                            //   label: const Text('Deletar Backup da Nuvem'),
-                            //   style: ElevatedButton.styleFrom(
-                            //     backgroundColor: Colors.red,
-                            //     foregroundColor: Colors.white,
-                            //   ),
-                            // ),
+                            const SizedBox(height: 8),
+                            ElevatedButton.icon(
+                              onPressed:
+                                  _isLoading ? null : _deleteFirestoreBackup,
+                              icon: const Icon(Icons.delete),
+                              label: const Text('Deletar Backup da Nuvem'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       ),
