@@ -1,5 +1,5 @@
 import 'package:logger/logger.dart';
-import 'package:ucs_projeto_app_receitas/models/tag_model.dart';
+import 'package:ucs_projeto_app_receitas/services/category_service.dart';
 import '../models/recipe_model.dart';
 import '../services/instruction_service.dart';
 import '../services/ingredient_service.dart';
@@ -14,6 +14,7 @@ class RecipesRepository {
   final InstructionService _instructionService = InstructionService();
   final TagService _tagsService = TagService();
   final RecipeTagService _recipeTagService = RecipeTagService();
+  final CategoryService _categoryService = CategoryService();
 
   final RecipeGeneratorService _recipeGeneratorService =
       RecipeGeneratorService();
@@ -45,6 +46,13 @@ class RecipesRepository {
       await _recipeTagService.associateTagWithRecipe(recipe.id, tag.id);
     }
 
+    for (var category in recipe.categories) {
+      await _categoryService.associateCategoryWithRecipe(
+        recipe.id,
+        category.id,
+      );
+    }
+
     logger.i('added recipe');
   }
 
@@ -55,6 +63,10 @@ class RecipesRepository {
     await _tagsService.updateRecipeTags(
       recipe.id,
       recipe.tags.map((tag) => tag.id).toList(),
+    );
+    await _categoryService.updateRecipeCategories(
+      recipe.id,
+      recipe.categories.map((category) => category.id).toList(),
     );
 
     logger.i('update recipe');
@@ -73,9 +85,17 @@ class RecipesRepository {
     await _ingredientService.deleteByRecipeId(recipeId);
     await _instructionService.deleteByRecipeId(recipeId);
     await _recipeTagService.removeTagsByRecipeId(recipeId);
+    await _categoryService.removeCategoriesByRecipeId(recipeId);
 
     for (var tag in recipe.tags) {
       await _tagsService.dissociateTagFromRecipe(recipeId, tag.id);
+    }
+
+    for (var category in recipe.categories) {
+      await _categoryService.dissociateCategoryFromRecipe(
+        recipeId,
+        category.id,
+      );
     }
 
     logger.i('Delete Recipe');
@@ -90,6 +110,11 @@ class RecipesRepository {
 
     final tags = await _tagsService.getTagsByRecipeId(recipe.id);
     recipe.tags = [...tags];
+
+    final categories = await _categoryService.getCategoriesByRecipeId(
+      recipe.id,
+    );
+    recipe.categories = [...categories];
   }
 
   Future<List<Recipe>> getAllRecipes() async {

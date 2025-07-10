@@ -98,6 +98,13 @@ class TagService {
     }
   }
 
+  /// Remove todas as associações de tags de uma receita
+  Future<void> removeTagsByRecipeId(String recipeIdValue) async {
+    await _db.delete(TagService.tableRecipeTags, '${TagService.recipeId} = ?', [
+      recipeIdValue,
+    ]);
+  }
+
   // Para buscar receitas por uma única tag
   Future<List<Recipe>> getRecipesByTagId(int tagId) async {
     final recipes = await _db.rawQuery(
@@ -138,5 +145,13 @@ class TagService {
       );
     }
     return await _db.deleteAll(TagService.table);
+  }
+
+  Future<List<Map<String, dynamic>>> getAllRecipeTags() async {
+    return await _db.getAll(TagService.tableRecipeTags);
+  }
+
+  Future<void> insertRecipeTag(Map<String, dynamic> tagJson) async {
+    await _db.insert(TagService.tableRecipeTags, tagJson);
   }
 }

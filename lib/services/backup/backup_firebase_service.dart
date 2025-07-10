@@ -92,6 +92,20 @@ class BackupFirebaseService {
         'lastUpdate': FieldValue.serverTimestamp(),
       });
 
+      // Salva associações de receitas com categorias e tags
+      final recipeCategories = await _categoryService.getAllRecipeCategories();
+      final recipeTags = await _tagService.getAllRecipeTags();
+      batch.set(backupRef.doc('recipe_categories'), {
+        'data': recipeCategories,
+        'count': recipeCategories.length,
+        'lastUpdate': FieldValue.serverTimestamp(),
+      });
+      batch.set(backupRef.doc('recipe_tags'), {
+        'data': recipeTags,
+        'count': recipeTags.length,
+        'lastUpdate': FieldValue.serverTimestamp(),
+      });
+
       // Salva informações gerais do backup
       batch.set(backupRef.doc('backup_info'), {
         'version': '1.0',
@@ -103,6 +117,8 @@ class BackupFirebaseService {
           'tags': tags.length,
           'ingredients': allIngredients.length,
           'instructions': allInstructions.length,
+          'recipeCategories': recipeCategories.length,
+          'recipeTags': recipeTags.length,
         },
       });
 
@@ -211,6 +227,34 @@ class BackupFirebaseService {
         }
         totalRestored += recipesData.length;
         _logger.i('${recipesData.length} receitas restauradas do Firestore.');
+      }
+
+      // Restaura associações de receitas com categorias
+      final recipeCategoriesDoc =
+          await backupRef.doc('recipe_categories').get();
+      if (recipeCategoriesDoc.exists) {
+        final recipeCategoriesData =
+            recipeCategoriesDoc.data()!['data'] as List<dynamic>;
+        for (final categoryJson in recipeCategoriesData) {
+          await _categoryService.insertRecipeCategory(categoryJson);
+        }
+        totalRestored += recipeCategoriesData.length;
+        _logger.i(
+          '${recipeCategoriesData.length} associações de categorias de receitas restauradas do Firestore.',
+        );
+      }
+
+      // Restaura associações de receitas com tags
+      final recipeTagsDoc = await backupRef.doc('recipe_tags').get();
+      if (recipeTagsDoc.exists) {
+        final recipeTagsData = recipeTagsDoc.data()!['data'] as List<dynamic>;
+        for (final tagJson in recipeTagsData) {
+          await _tagService.insertRecipeTag(tagJson);
+        }
+        totalRestored += recipeTagsData.length;
+        _logger.i(
+          '${recipeTagsData.length} associações de tags de receitas restauradas do Firestore.',
+        );
       }
 
       _logger.i(

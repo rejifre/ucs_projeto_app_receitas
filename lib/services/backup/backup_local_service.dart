@@ -34,6 +34,8 @@ class BackupLocalService {
       final tags = await _tagService.getAll();
       final allIngredients = await _ingredientService.getAll();
       final allInstructions = await _instructionService.getAll();
+      final recipeCategories = await _categoryService.getAllRecipeCategories();
+      final recipeTags = await _tagService.getAllRecipeTags();
 
       // Cria estrutura de backup simplificada e consistente
       final backupData = {
@@ -54,6 +56,8 @@ class BackupLocalService {
             'tags': tags.length,
             'ingredients': allIngredients.length,
             'instructions': allInstructions.length,
+            'recipe_tags': recipeTags.length,
+            'recipe_categories': recipeCategories.length,
           },
         },
         'data': {
@@ -66,6 +70,8 @@ class BackupLocalService {
               allInstructions
                   .map((instruction) => instruction.toMap())
                   .toList(),
+          'recipe_tags': recipeTags,
+          'recipe_categories': recipeCategories,
         },
       };
 

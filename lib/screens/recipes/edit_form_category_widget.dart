@@ -1,76 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/tag_model.dart';
-import '../../providers/tags_provider.dart';
+import '../../models/category_model.dart';
+import '../../providers/categories_provider.dart';
 
-// --- Widget de Gerenciamento de Tags ---
-class EditFormTagsWidget extends StatefulWidget {
-  final List<String> initialTagIds; // IDs das tags já selecionadas
-  final ValueChanged<List<String>>
-  onTagsChanged; // Callback para retornar a lista de IDs de tags
+// --- Widget de Gerenciamento de Categorias ---
+class EditFormCategoryWidget extends StatefulWidget {
+  final List<String> initialCategoryIds; // IDs das categorias já selecionadas
+  final ValueChanged<List<String>> onCategoriesChanged;
 
-  const EditFormTagsWidget({
+  const EditFormCategoryWidget({
     super.key,
-    required this.initialTagIds,
-    required this.onTagsChanged,
+    required this.initialCategoryIds,
+    required this.onCategoriesChanged,
   });
 
   @override
-  State<EditFormTagsWidget> createState() => EditFormTagsWidgetState();
+  State<EditFormCategoryWidget> createState() => EditFormCategoryWidgetState();
 }
 
-class EditFormTagsWidgetState extends State<EditFormTagsWidget> {
-  late List<String> selectedTagIds = [];
-  final TextEditingController _newTagController = TextEditingController();
+class EditFormCategoryWidgetState extends State<EditFormCategoryWidget> {
+  late List<String> selectedCategoryIds = [];
+  final TextEditingController _newCategoryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    selectedTagIds = List.from(widget.initialTagIds);
+    selectedCategoryIds = List.from(widget.initialCategoryIds);
   }
 
-  void _removeTag(String tagId) {
+  void _removeCategory(String categoryId) {
     setState(() {
-      selectedTagIds.remove(tagId);
-      widget.onTagsChanged(selectedTagIds);
+      selectedCategoryIds.remove(categoryId);
+      widget.onCategoriesChanged(selectedCategoryIds);
     });
   }
 
   @override
   void dispose() {
-    _newTagController.dispose();
+    _newCategoryController.dispose();
     super.dispose();
   }
 
-  void setTags(List<String> list) {
+  void setCategories(List<String> list) {
     setState(() {
-      selectedTagIds = list;
-      widget.onTagsChanged(selectedTagIds);
+      selectedCategoryIds = list;
+      widget.onCategoriesChanged(selectedCategoryIds);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final tagsProvider = Provider.of<TagsProvider>(context);
-    final List<Tag> availableTags = tagsProvider.tags;
+    final categoriesProvider = Provider.of<CategoriesProvider>(context);
+    final List<CategoryModel> availableCategories =
+        categoriesProvider.categories;
 
     // Para múltipla escolha, use showModalBottomSheet com CheckboxListTile
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tags', style: Theme.of(context).textTheme.titleLarge),
+        Text('Categorias', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
             icon: const Icon(Icons.list),
-            label: const Text('Selecionar Tags'),
+            label: const Text('Selecionar Categorias'),
             onPressed: () async {
               final result = await showModalBottomSheet<List<String>>(
                 context: context,
                 builder: (context) {
-                  List<String> tempSelected = List.from(selectedTagIds);
+                  List<String> tempSelected = List.from(selectedCategoryIds);
                   return StatefulBuilder(
                     builder: (context, setModalState) {
                       return Column(
@@ -86,16 +86,16 @@ class EditFormTagsWidgetState extends State<EditFormTagsWidget> {
                           Expanded(
                             child: ListView(
                               children:
-                                  availableTags.map((tag) {
+                                  availableCategories.map((category) {
                                     return CheckboxListTile(
-                                      value: tempSelected.contains(tag.id),
-                                      title: Text(tag.name),
+                                      value: tempSelected.contains(category.id),
+                                      title: Text(category.name),
                                       onChanged: (checked) {
                                         setModalState(() {
                                           if (checked == true) {
-                                            tempSelected.add(tag.id);
+                                            tempSelected.add(category.id);
                                           } else {
-                                            tempSelected.remove(tag.id);
+                                            tempSelected.remove(category.id);
                                           }
                                         });
                                       },
@@ -121,8 +121,8 @@ class EditFormTagsWidgetState extends State<EditFormTagsWidget> {
               );
               if (result != null) {
                 setState(() {
-                  selectedTagIds = result;
-                  widget.onTagsChanged(selectedTagIds);
+                  selectedCategoryIds = result;
+                  widget.onCategoriesChanged(selectedCategoryIds);
                 });
               }
             },
@@ -134,17 +134,21 @@ class EditFormTagsWidgetState extends State<EditFormTagsWidget> {
           spacing: 8.0,
           runSpacing: 8.0,
           children:
-              selectedTagIds.isEmpty
-                  ? [const Text('Nenhuma tag adicionada.')]
-                  : selectedTagIds.map((tagId) {
-                    final tag = availableTags.firstWhere(
-                      (t) => t.id == tagId,
-                      orElse: () => Tag(id: tagId, name: 'Tag Desconhecida'),
+              selectedCategoryIds.isEmpty
+                  ? [const Text('Nenhuma categoria adicionada.')]
+                  : selectedCategoryIds.map((categoryId) {
+                    final category = availableCategories.firstWhere(
+                      (c) => c.id == categoryId,
+                      orElse:
+                          () => CategoryModel(
+                            id: categoryId,
+                            name: 'Categoria Desconhecida',
+                          ),
                     );
                     return Chip(
-                      label: Text(tag.name),
+                      label: Text(category.name),
                       deleteIcon: const Icon(Icons.close, size: 18),
-                      onDeleted: () => _removeTag(tag.id),
+                      onDeleted: () => _removeCategory(category.id),
                       backgroundColor: Theme.of(
                         context,
                       ).primaryColor.withValues(alpha: 0.1),

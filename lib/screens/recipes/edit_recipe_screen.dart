@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/ingredient_model.dart';
 import '../../models/instruction_model.dart';
 import '../../models/recipe_model.dart';
+import '../../providers/categories_provider.dart';
 import '../../providers/recipes_provider.dart';
 import '../../providers/tags_provider.dart';
 import '../../routes/routes.dart';
@@ -15,6 +16,7 @@ import '../../repositories/security_auth_repository.dart';
 import '../../services/recipe_generator_service.dart';
 import '../../ui/app_colors.dart';
 import '../../utils/recipe_screen_type.dart';
+import 'edit_form_category_widget.dart';
 import 'edit_form_ingredient_list_widget.dart';
 import 'edit_form_instruction_list_widget.dart';
 
@@ -33,6 +35,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       GlobalKey<EditFormInstructionListWidgetState>();
   final GlobalKey<EditFormTagsWidgetState> _tagsListKey =
       GlobalKey<EditFormTagsWidgetState>();
+  final GlobalKey<EditFormCategoryWidgetState> _categoryListKey =
+      GlobalKey<EditFormCategoryWidgetState>();
 
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
@@ -48,6 +52,8 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
 
   // Armazena os IDs das tags selecionadas
   List<String> _selectedTagIds = [];
+  // Armazena os IDs das categorias selecionadas
+  List<String> _selectedCategoryIds = [];
 
   @override
   void didChangeDependencies() {
@@ -66,6 +72,11 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       _selectedTagIds =
           _currentRecipe?.tags.map((tag) => tag.id).toList() ?? [];
       _isInitialized = true;
+
+      // Inicializa as categorias selecionadas
+      _selectedCategoryIds =
+          _currentRecipe?.categories.map((category) => category.id).toList() ??
+          [];
     }
   }
 
@@ -150,6 +161,10 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<RecipesProvider>(context, listen: false);
       final tagsProvider = Provider.of<TagsProvider>(context, listen: false);
+      final categoriesProvider = Provider.of<CategoriesProvider>(
+        context,
+        listen: false,
+      );
       _formKey.currentState!.save();
 
       final ingredientControllers = _ingredientListKey.currentState!;
@@ -176,11 +191,16 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ),
       );
 
-      // Corrija: sempre obtenha as tags selecionadas do widget de tags
       final selectedTagIds = _tagsListKey.currentState?.selectedTagIds ?? [];
       final selectedTags =
           tagsProvider.tags
               .where((tag) => selectedTagIds.contains(tag.id))
+              .toList();
+      final selectedCategoryIds =
+          _categoryListKey.currentState?.selectedCategoryIds ?? [];
+      final selectedCategories =
+          categoriesProvider.categories
+              .where((category) => selectedCategoryIds.contains(category.id))
               .toList();
 
       final updatedRecipe = Recipe(
@@ -193,6 +213,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         steps: instructions,
         date: _getDate(),
         tags: selectedTags,
+        categories: selectedCategories,
       );
       final sm = ScaffoldMessenger.of(context);
 
@@ -361,6 +382,15 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                 onTagsChanged: (tags) {
                   setState(() {
                     _selectedTagIds = tags;
+                  });
+                },
+              ),
+              EditFormCategoryWidget(
+                key: _categoryListKey,
+                initialCategoryIds: _selectedCategoryIds,
+                onCategoriesChanged: (categories) {
+                  setState(() {
+                    _selectedCategoryIds = categories;
                   });
                 },
               ),
