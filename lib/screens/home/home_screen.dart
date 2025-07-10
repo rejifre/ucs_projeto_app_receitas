@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ucs_projeto_app_receitas/screens/categories/categories_screen_widget.dart';
-import 'package:ucs_projeto_app_receitas/screens/favorites_screen.dart';
-import 'package:ucs_projeto_app_receitas/screens/search_screen.dart';
-import 'package:ucs_projeto_app_receitas/screens/widgets/drawer_widget.dart';
 import '../../routes/routes.dart';
 import '../../ui/app_colors.dart';
+import '../categories/categories_screen_widget.dart';
+import '../favorites_screen.dart';
+import '../search_screen.dart';
 import 'home_screen_widget.dart';
 
 class HomeScreen extends StatefulWidget {

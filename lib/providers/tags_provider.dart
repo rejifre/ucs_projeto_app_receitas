@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ucs_projeto_app_receitas/repositories/tags_repository.dart';
 import '../models/tag_model.dart';
+import '../repositories/tags_repository.dart';
 
 class TagsProvider with ChangeNotifier {
   final TagsRepository _service = TagsRepository();

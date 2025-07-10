@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
-import 'package:ucs_projeto_app_receitas/models/recipe_model.dart';
 import 'package:uuid/uuid.dart';
 import '../models/ingredient_model.dart';
 import '../models/instruction_model.dart';
+import '../models/recipe_model.dart';
 
 class RecipeGeneratorService {
   /// Method to generate a random recipe

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ucs_projeto_app_receitas/repositories/login_repository.dart';
-import 'package:ucs_projeto_app_receitas/routes/routes.dart';
+import '../../repositories/login_repository.dart';
+import '../../routes/routes.dart';
 import '../../ui/app_colors.dart';
 
 class DrawerWidget extends StatelessWidget {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:ucs_projeto_app_receitas/screens/recipes/edit_form_tags_widget.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/ingredient_model.dart';
 import '../../models/instruction_model.dart';
@@ -19,6 +18,7 @@ import '../../utils/recipe_screen_type.dart';
 import 'edit_form_category_widget.dart';
 import 'edit_form_ingredient_list_widget.dart';
 import 'edit_form_instruction_list_widget.dart';
+import 'edit_form_tags_widget.dart';
 
 class EditRecipeScreen extends StatefulWidget {
   const EditRecipeScreen({super.key});

@@ -4,16 +4,16 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/intl.dart';
-import 'package:ucs_projeto_app_receitas/services/category_service.dart';
-import 'package:ucs_projeto_app_receitas/services/ingredient_service.dart';
-import 'package:ucs_projeto_app_receitas/services/instruction_service.dart';
-import 'package:ucs_projeto_app_receitas/services/recipe_service.dart';
-import 'package:ucs_projeto_app_receitas/services/tag_service.dart';
 import '../../models/category_model.dart';
 import '../../models/ingredient_model.dart';
 import '../../models/instruction_model.dart';
 import '../../models/recipe_model.dart';
 import '../../models/tag_model.dart';
+import '../category_service.dart';
+import '../ingredient_service.dart';
+import '../instruction_service.dart';
+import '../recipe_service.dart';
+import '../tag_service.dart';
 
 class BackupLocalService {
   final RecipeService _recipeService = RecipeService();

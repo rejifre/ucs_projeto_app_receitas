@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ucs_projeto_app_receitas/ui/app_colors.dart';
-
 import '../../routes/routes.dart';
+import '../../ui/app_colors.dart';
 
 class BottomNavigatorBarWidget extends StatelessWidget {
   final int currentIndex;
