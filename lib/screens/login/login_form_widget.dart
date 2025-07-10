@@ -33,6 +33,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -46,6 +48,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = true;
@@ -75,14 +79,18 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         widget.onLoginSuccess!();
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+        });
+      }
       //_showSnackBar(e.toString(), isError: true);
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -91,6 +99,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
       _showSnackBar('Digite seu e-mail para redefinir a senha', isError: true);
       return;
     }
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = true;
@@ -104,9 +114,11 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
     } catch (e) {
       _showSnackBar(e.toString(), isError: true);
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -135,7 +147,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
                       Icon(
                         Icons.restaurant_menu,
                         size: 80,
-                        color: Theme.of(context).primaryColor,
+                        color: AppColors.buttonMainColor,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -280,6 +292,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
                       if (!_isLoading)
                         TextButton(
                           onPressed: () {
+                            if (!mounted) return;
+
                             setState(() {
                               _isLogin = !_isLogin;
                               _errorMessage = null;
