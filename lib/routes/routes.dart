@@ -9,6 +9,8 @@ import '../screens/recipes/edit_recipe_screen.dart';
 import '../screens/recipes/recipe_detail_screen.dart';
 import '../screens/search_screen.dart';
 import '../screens/login/login_form_widget.dart';
+import '../screens/tags/edit_tag_screen.dart';
+import '../screens/tags/tags_screen.dart';
 import '../screens/user_profile_screen.dart';
 
 class Routes {
@@ -26,6 +28,8 @@ class Routes {
   static const String login = '/login';
   static const String userProfile = '/profile';
   static const String settings = '/settings';
+  static const String tags = '/tags';
+  static const String editTag = '/editTag';
 
   // Método para gerar rotas dinamicamente
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
@@ -82,6 +86,15 @@ class Routes {
 
       case settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+
+      case tags:
+        return MaterialPageRoute(builder: (_) => const TagsScreen());
+
+      case editTag:
+        return MaterialPageRoute(
+          builder: (_) => const EditTagScreen(),
+          settings: routeSettings,
+        );
 
       default:
         return MaterialPageRoute(

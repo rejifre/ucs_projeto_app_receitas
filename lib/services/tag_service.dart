@@ -110,9 +110,9 @@ class TagService {
     return recipes.map((recipe) => Recipe.fromMap(recipe)).toList();
   }
 
-  Future<List<Recipe>> searchByName(String name) async {
-    final recipesDB = await _db.searchByName(TagService.table, 'name', name);
-    return recipesDB.map((item) => Recipe.fromMap(item)).toList();
+  Future<List<Tag>> searchByName(String name) async {
+    final tagsDB = await _db.searchByName(TagService.table, 'name', name);
+    return tagsDB.map((item) => Tag.fromMap(item)).toList();
   }
 
   Future<int> deleteAll() async {

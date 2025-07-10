@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/recipes_provider.dart';
-import '../repositories/backup_repository.dart'; // Certifique-se de que este caminho está correto
+import '../providers/categories_provider.dart'; // Adicione este import
+import '../providers/tags_provider.dart';
+import '../repositories/backup_repository.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-/// Exemplo de tela demonstrando como usar o BackupRepository
-///
-/// Esta tela serve como exemplo de integração e demonstra todas as
-/// funcionalidades disponíveis no BackupRepository.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -14,8 +13,12 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+// TODO: REFATORAR ESSE PESADELO
 class _SettingsScreenState extends State<SettingsScreen> {
   final BackupRepository _backupRepository = BackupRepository();
+
+  // Substitua o plugin por uma variável global, se preferir
+  final localNotifications = FlutterLocalNotificationsPlugin();
 
   bool _isLoading = false;
   String? _statusMessage;
@@ -24,7 +27,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    configurarNotificacaoLocal();
     _loadBackupStatus();
+  }
+
+  Future<void> configurarNotificacaoLocal() async {
+    const AndroidInitializationSettings cfgAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const cfgiOs = DarwinInitializationSettings();
+
+    var initializationSettings = const InitializationSettings(
+      android: cfgAndroid,
+      iOS: cfgiOs,
+    );
+
+    await localNotifications.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: notifiocationResponse,
+    );
+  }
+
+  void notifiocationResponse(NotificationResponse details) {
+    // Aqui você pode tratar o clique na notificação, se desejar
+    // Exemplo: print('Notificação clicada: ${details.payload}');
+  }
+
+  Future<void> _showNotification(
+    String title,
+    String body, {
+    bool isError = false,
+  }) async {
+    await localNotifications.show(
+      0,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'backup_channel',
+          'Backup Notificações',
+          importance: Importance.max,
+          priority: Priority.high,
+          color: isError ? const Color(0xFFD32F2F) : const Color(0xFF388E3C),
+        ),
+        iOS: const DarwinNotificationDetails(),
+      ),
+    );
   }
 
   Future<void> _loadBackupStatus() async {
@@ -69,8 +116,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : 'Backup local falhou ou foi cancelado',
         isError: !success,
       );
+      await _showNotification(
+        'Backup Local',
+        success
+            ? 'Backup local realizado com sucesso!'
+            : 'Backup local falhou ou foi cancelado',
+        isError: !success,
+      );
     } catch (e) {
       await _showMessage('Erro no backup local: $e', isError: true);
+      await _showNotification(
+        'Backup Local',
+        'Erro no backup local: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -87,21 +146,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : 'Restauração falhou ou foi cancelada',
         isError: !success,
       );
+      await _showNotification(
+        'Restauração Local',
+        success
+            ? 'Restauração realizada com sucesso!'
+            : 'Restauração falhou ou foi cancelada',
+        isError: !success,
+      );
 
       if (success) {
-        updateRecipesProvider(); // Atualiza as receitas no provider
+        updateProviders(); // Atualiza as receitas no provider
         await _loadBackupStatus(); // Atualiza status após restauração
       }
     } catch (e) {
       await _showMessage('Erro na restauração: $e', isError: true);
+      await _showNotification(
+        'Restauração Local',
+        'Erro na restauração: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
-  updateRecipesProvider() {
+  updateProviders() {
     // Atualiza as receitas no provider
     Provider.of<RecipesProvider>(context, listen: false).loadRecipes();
+    // Atualiza as categorias no provider
+    Provider.of<CategoriesProvider>(context, listen: false).loadCategories();
+    // Atualiza as tags no provider (se necessário)
+    Provider.of<TagsProvider>(context, listen: false).loadTags();
   }
 
   Future<void> _backupToFirestore() async {
@@ -115,12 +190,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : 'Backup no Firestore falhou',
         isError: !success,
       );
+      await _showNotification(
+        'Backup Firestore',
+        success
+            ? 'Backup no Firestore realizado com sucesso!'
+            : 'Backup no Firestore falhou',
+        isError: !success,
+      );
 
       if (success) {
         await _loadBackupStatus(); // Atualiza status após backup
       }
     } catch (e) {
       await _showMessage('Erro no backup Firestore: $e', isError: true);
+      await _showNotification(
+        'Backup Firestore',
+        'Erro no backup Firestore: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -137,13 +224,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : 'Restauração do Firestore falhou',
         isError: !success,
       );
+      await _showNotification(
+        'Restauração Firestore',
+        success
+            ? 'Restauração do Firestore realizada com sucesso!'
+            : 'Restauração do Firestore falhou',
+        isError: !success,
+      );
 
       if (success) {
-        updateRecipesProvider(); // Atualiza as receitas no provider
+        updateProviders(); // Atualiza as receitas no provider
         await _loadBackupStatus(); // Atualiza status após restauração
       }
     } catch (e) {
       await _showMessage('Erro na restauração Firestore: $e', isError: true);
+      await _showNotification(
+        'Restauração Firestore',
+        'Erro na restauração Firestore: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -184,12 +283,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : 'Falha ao deletar backup do Firestore',
         isError: !success,
       );
+      await _showNotification(
+        'Deletar Backup Firestore',
+        success
+            ? 'Backup do Firestore deletado com sucesso!'
+            : 'Falha ao deletar backup do Firestore',
+        isError: !success,
+      );
 
       if (success) {
         await _loadBackupStatus(); // Atualiza status após deleção
       }
     } catch (e) {
       await _showMessage('Erro ao deletar backup: $e', isError: true);
+      await _showNotification(
+        'Deletar Backup Firestore',
+        'Erro ao deletar backup: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -218,9 +329,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
 
       await _showMessage(message, isError: isError);
+      await _showNotification('Backup Completo', message, isError: isError);
       await _loadBackupStatus(); // Atualiza status
     } catch (e) {
       await _showMessage('Erro no backup completo: $e', isError: true);
+      await _showNotification(
+        'Backup Completo',
+        'Erro no backup completo: $e',
+        isError: true,
+      );
     } finally {
       setState(() => _isLoading = false);
     }

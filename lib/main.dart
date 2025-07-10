@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/categories_provider.dart';
+import 'providers/tags_provider.dart';
 import 'routes/routes.dart';
 import 'providers/recipes_provider.dart';
 import 'ui/app_theme.dart';
@@ -16,6 +17,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => RecipesProvider()),
         ChangeNotifierProvider(create: (context) => CategoriesProvider()),
+        ChangeNotifierProvider(create: (context) => TagsProvider()),
       ],
       child: const MyApp(),
     ),
@@ -28,15 +30,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => RecipesProvider(),
-      child: MaterialApp(
-        title: 'App Receitas',
-        initialRoute: Routes.initial,
-        navigatorKey: Routes.navigation,
-        theme: AppTheme.appTheme,
-        onGenerateRoute: Routes.generateRoute,
-      ),
+    return MaterialApp(
+      title: 'App Receitas',
+      initialRoute: Routes.initial,
+      navigatorKey: Routes.navigation,
+      theme: AppTheme.appTheme,
+      onGenerateRoute: Routes.generateRoute,
     );
   }
 }

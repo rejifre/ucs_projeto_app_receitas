@@ -45,4 +45,11 @@ class TagsRepository {
     }
     return null;
   }
+
+  Future<List<Tag>> filter(String query) async {
+    final tags = await _tagService.searchByName(query);
+    logger.i('Search Tags');
+    logger.i(tags);
+    return tags;
+  }
 }

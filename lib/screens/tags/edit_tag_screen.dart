@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../../models/category_model.dart';
-import '../../providers/categories_provider.dart';
+import '../../models/tag_model.dart';
+import '../../providers/tags_provider.dart';
 import '../../ui/app_colors.dart';
 
-class EditCategoryScreen extends StatefulWidget {
-  const EditCategoryScreen({super.key});
+class EditTagScreen extends StatefulWidget {
+  const EditTagScreen({super.key});
 
   @override
-  State<EditCategoryScreen> createState() => _EditCategoryScreenState();
+  State<EditTagScreen> createState() => _EditTagScreenState();
 }
 
-class _EditCategoryScreenState extends State<EditCategoryScreen> {
+class _EditTagScreenState extends State<EditTagScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _idController = TextEditingController();
   final _uuid = const Uuid();
   var isEditing = false;
-  Category? _category;
+  Tag? _tag;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_category == null) {
-      final category = ModalRoute.of(context)!.settings.arguments as Category?;
-      isEditing = category?.id != null;
-      _idController.text = category?.id ?? _uuid.v4();
-      _nameController.text = category?.name ?? '';
-      _category = category;
+    if (_tag == null) {
+      final tag = ModalRoute.of(context)!.settings.arguments as Tag?;
+      isEditing = tag?.id != null;
+      _idController.text = tag?.id ?? _uuid.v4();
+      _nameController.text = tag?.name ?? '';
+      _tag = tag;
     }
   }
 
@@ -42,47 +42,42 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
   void _submitForm() {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, insira um nome para a categoria'),
-        ),
+        const SnackBar(content: Text('Por favor, insira um nome para a tag')),
       );
       return;
     }
 
     if (_formKey.currentState?.validate() ?? false) {
-      _saveCategory();
+      _saveTag();
     }
   }
 
-  void _saveCategory() {
-    final category = Category(
-      id: _idController.text,
-      name: _nameController.text,
-    );
+  void _saveTag() {
+    final tag = Tag(id: _idController.text, name: _nameController.text);
 
-    final provider = Provider.of<CategoriesProvider>(context, listen: false);
-    provider.addOrUpdateCategory(category);
+    final provider = Provider.of<TagsProvider>(context, listen: false);
+    provider.addOrUpdateTag(tag);
 
     final sm = ScaffoldMessenger.of(context);
     sm.showSnackBar(
       SnackBar(
         content: Text(
           isEditing
-              ? 'Categoria atualizada com sucesso!'
-              : 'Categoria adicionada com sucesso!',
+              ? 'Tag atualizada com sucesso!'
+              : 'Tag adicionada com sucesso!',
         ),
       ),
     );
   }
 
-  void _confirmDeleteCategory() {
+  void _confirmDeleteTag() {
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Excluir Categoria'),
+            title: const Text('Excluir Tag'),
             content: const Text(
-              'Você tem certeza que deseja excluir esta categoria?',
+              'Você tem certeza que deseja excluir esta tag?',
             ),
             actions: [
               TextButton(
@@ -91,11 +86,11 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  final provider = Provider.of<CategoriesProvider>(
+                  final provider = Provider.of<TagsProvider>(
                     context,
                     listen: false,
                   );
-                  provider.deleteCategory(_idController.text);
+                  provider.deleteTag(_idController.text);
                   Navigator.of(context).pop(); // fecha o dialog
                   Navigator.of(context).pop(); // volta para a tela anterior
                 },
@@ -134,7 +129,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Categoria'),
+        title: const Text('Editar Tag'),
         actions: [
           Visibility(
             visible: isEditing,
@@ -142,7 +137,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
               icon: const Icon(Icons.delete),
               label: const Text("Excluir"),
               style: TextButton.styleFrom(foregroundColor: AppColors.delete),
-              onPressed: _confirmDeleteCategory,
+              onPressed: _confirmDeleteTag,
             ),
           ),
         ],
@@ -173,7 +168,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
               // ),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: const Text('Salvar Categoria'),
+                child: const Text('Salvar Tag'),
               ),
             ],
           ),

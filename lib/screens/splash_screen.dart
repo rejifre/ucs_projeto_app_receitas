@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
             // Nome do app
             const Text(
-              "App Receitas",
+              "Receitas na Mão",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 32.0,

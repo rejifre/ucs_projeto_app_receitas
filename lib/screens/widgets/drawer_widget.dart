@@ -70,6 +70,13 @@ class DrawerWidget extends StatelessWidget {
               Navigator.pushNamed(context, Routes.settings);
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.label),
+            title: const Text('Tags'),
+            onTap: () {
+              Navigator.pushNamed(context, Routes.tags);
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),

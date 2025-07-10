@@ -71,10 +71,16 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SearchBar(
-              hintText: 'Buscar categoria....',
-              onChanged: (value) => _loadCategories(query: value.trim()),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: 'Buscar tags...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                _loadCategories(query: value.trim());
+              },
             ),
           ),
           Expanded(
@@ -98,6 +104,7 @@ class _CategoriesScreenWidgetState extends State<CategoriesScreenWidget> {
               },
             ),
           ),
+          const SizedBox(height: 20),
         ],
       ),
     );
