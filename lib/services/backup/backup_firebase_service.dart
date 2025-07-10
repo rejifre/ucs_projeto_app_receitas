@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/web.dart';
 import 'package:ucs_projeto_app_receitas/services/category_service.dart';
 import 'package:ucs_projeto_app_receitas/services/ingredient_service.dart';
@@ -94,7 +95,7 @@ class BackupFirebaseService {
       // Salva informações gerais do backup
       batch.set(backupRef.doc('backup_info'), {
         'version': '1.0',
-        'createdAt': FieldValue.serverTimestamp(),
+        'createdAt': DateFormat('dd/MM/yy HH:mm').format(DateTime.now()),
         'userEmail': user.email,
         'summary': {
           'recipes': recipes.length,

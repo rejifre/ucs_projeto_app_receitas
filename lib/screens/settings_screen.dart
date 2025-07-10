@@ -258,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                               if (_backupStatus!['firestore']['info'] != null)
                                 Text(
-                                  'Última atualização: ${_backupStatus!['firestore']['info']['timestamp'] ?? 'N/A'}',
+                                  'Última atualização: ${_backupStatus!['firestore']['info']['createdAt'] ?? 'N/A'}',
                                 ),
                               const SizedBox(height: 4),
                               Text(
@@ -370,17 +370,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed:
-                                  _isLoading ? null : _deleteFirestoreBackup,
-                              icon: const Icon(Icons.delete),
-                              label: const Text('Deletar Backup da Nuvem'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
+                            // const SizedBox(height: 8),
+                            // ElevatedButton.icon(
+                            //   onPressed:
+                            //       _isLoading ? null : _deleteFirestoreBackup,
+                            //   icon: const Icon(Icons.delete),
+                            //   label: const Text('Deletar Backup da Nuvem'),
+                            //   style: ElevatedButton.styleFrom(
+                            //     backgroundColor: Colors.red,
+                            //     foregroundColor: Colors.white,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
