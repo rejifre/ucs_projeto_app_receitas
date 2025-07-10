@@ -167,8 +167,24 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
       );
       _formKey.currentState!.save();
 
-      final ingredientControllers = _ingredientListKey.currentState!;
-      final instructionControllers = _instructionListKey.currentState!;
+      // Proteja contra null nos keys dos widgets
+      final ingredientControllers = _ingredientListKey.currentState;
+      final instructionControllers = _instructionListKey.currentState;
+      final tagsWidgetState = _tagsListKey.currentState;
+      final categoryWidgetState = _categoryListKey.currentState;
+
+      if (ingredientControllers == null ||
+          instructionControllers == null ||
+          tagsWidgetState == null ||
+          categoryWidgetState == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Erro interno: componentes não inicializados."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
 
       final ingredients = List.generate(
         ingredientControllers.ingredientNameControllers.length,
@@ -191,13 +207,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         ),
       );
 
-      final selectedTagIds = _tagsListKey.currentState?.selectedTagIds ?? [];
+      final selectedTagIds = tagsWidgetState.selectedTagIds;
       final selectedTags =
           tagsProvider.tags
               .where((tag) => selectedTagIds.contains(tag.id))
               .toList();
-      final selectedCategoryIds =
-          _categoryListKey.currentState?.selectedCategoryIds ?? [];
+
+      final selectedCategoryIds = categoryWidgetState.selectedCategoryIds;
       final selectedCategories =
           categoriesProvider.categories
               .where((category) => selectedCategoryIds.contains(category.id))
