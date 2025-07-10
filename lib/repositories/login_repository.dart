@@ -36,6 +36,11 @@ class LoginRepository {
     await _loginService.resetPassword(email);
   }
 
+  // Método para deletar conta
+  Future<void> deleteAccount({required String password}) async {
+    await _loginService.deleteAccount(password: password);
+  }
+
   // Obter usuário atual
   User? getCurrentUser() {
     var user = _loginService.getCurrentUser();
