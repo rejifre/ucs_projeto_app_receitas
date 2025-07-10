@@ -11,9 +11,11 @@ class UserProfileScreen extends StatelessWidget {
     final User? user = loginService.getCurrentUser();
 
     if (user == null) {
-      return const SizedBox.shrink();
+      return Scaffold(
+        appBar: AppBar(title: const Text('Perfil do Usuário')),
+        body: const Center(child: Text('Usuário não está logado')),
+      );
     }
-
     return Scaffold(
       appBar: AppBar(title: const Text('Perfil do Usuário')),
       body: Padding(

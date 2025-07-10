@@ -9,19 +9,44 @@ import 'prepare_instruction_widget.dart';
 import '../widgets/star_rating_widget.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
-  const RecipeDetailScreen({super.key});
+  const RecipeDetailScreen({super.key, this.recipeId});
+
+  final String? recipeId;
 
   @override
   Widget build(BuildContext context) {
-    final recipeId = ModalRoute.of(context)!.settings.arguments as String;
+    // Verificação mais segura para obter o recipeId
+
+    // Se não há ID válido, mostra tela de erro
+    if (recipeId?.isEmpty ?? true) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Receita')),
+        body: const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'Receita não encontrada',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text('ID da receita não foi fornecido'),
+            ],
+          ),
+        ),
+      );
+    }
+
     final provider = Provider.of<RecipesProvider>(context);
     final recipe = provider.recipes.firstWhere(
       (r) => r.id == recipeId,
       orElse:
           () => Recipe(
             id: '',
-            title: 'Unknown',
-            description: 'No description available',
+            title: 'Receita não encontrada',
+            description: 'Esta receita não existe ou foi removida.',
             preparationTime: '0 min',
             ingredients: [],
             steps: [],
@@ -29,6 +54,37 @@ class RecipeDetailScreen extends StatelessWidget {
             date: 'N/A',
           ),
     );
+
+    // Se a receita não foi encontrada, mostra tela de erro
+    if (recipe.id.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Receita')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.restaurant_menu_outlined,
+                size: 64,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Receita não encontrada',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text('ID: $recipeId'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Voltar'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(

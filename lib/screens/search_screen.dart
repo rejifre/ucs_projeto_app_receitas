@@ -45,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _navigateToDetail(String id) async {
-    await Navigator.pushNamed(context, Routes.recipe, arguments: id);
+    await Navigator.pushNamed(context, Routes.recipeDetail, arguments: id);
     _loadRecipes();
   }
 

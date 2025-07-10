@@ -16,7 +16,7 @@ class Routes {
   static const String initial = '/';
   static const String auth = '/auth';
   static const String home = '/home';
-  static const String recipe = '/recipe';
+  static const String recipeDetail = '/recipeDetail';
   static const String editRecipe = '/edit';
   static const String categoriesScreen = '/categories';
   static const String search = '/search';
@@ -39,11 +39,17 @@ class Routes {
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
-      case recipe:
-        return MaterialPageRoute(builder: (_) => const RecipeDetailScreen());
+      case recipeDetail:
+        final String? recipeId = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => RecipeDetailScreen(recipeId: recipeId),
+        );
 
       case editRecipe:
-        return MaterialPageRoute(builder: (_) => EditRecipeScreen());
+        return MaterialPageRoute(
+          builder: (_) => const EditRecipeScreen(),
+          settings: settings,
+        );
 
       case categoriesScreen:
         return MaterialPageRoute(
@@ -51,7 +57,10 @@ class Routes {
         );
 
       case editCategory:
-        return MaterialPageRoute(builder: (_) => const EditCategoryScreen());
+        return MaterialPageRoute(
+          builder: (_) => const EditCategoryScreen(),
+          settings: settings,
+        );
 
       case search:
         return MaterialPageRoute(builder: (_) => const SearchScreen());

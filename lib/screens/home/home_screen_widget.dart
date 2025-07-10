@@ -16,7 +16,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   List<Recipe> _recipes = [];
 
   void _navigateToDetail(String recipeId) async {
-    await Navigator.pushNamed(context, Routes.recipe, arguments: recipeId);
+    await Navigator.pushNamed(
+      context,
+      Routes.recipeDetail,
+      arguments: recipeId,
+    );
   }
 
   @override
